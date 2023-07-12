@@ -53,6 +53,11 @@ const Header = () => {
                     }}>
                     <FontAwesomeIcon
                         icon={faUser} />
+                    {account && (
+                        <div className={className.name}>
+                            {`${account.lastName ?? ""} ${account.firstName ?? ""}`}
+                        </div>
+                    )}
                 </div>
                 <div
                     className={className.search}

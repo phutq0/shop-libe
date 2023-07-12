@@ -19,6 +19,10 @@ const className = {
         py-3 px-5 bg-black rounded text-white border font-semibold
         cursor-pointer hover:bg-white hover:text-black
     `,
+    buttonLoginDisable: `
+        py-3 px-5 bg-black rounded text-white border font-semibold
+        cursor-default opacity-60
+    `,
     action2: `flex flex-col ml-4`,
     forgot: `hover:opacity-50 cursor-pointer`,
     row: `flex flex-row text-gray-500`,

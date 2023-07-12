@@ -1,7 +1,10 @@
-import { bind } from "./Utils"
+import {
+    UtilComponents,
+} from "./Utils";
 
-const Utils = {
-    bind: bind
-}
+import Utils from "./Utils";
 
 export default Utils
+export {
+    UtilComponents
+}

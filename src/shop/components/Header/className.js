@@ -15,7 +15,8 @@ const className = {
     logo: `text-5xl font-semibold cursor-pointer`,
     right: `flex-1 flex flex-row-reverse`,
     search: `text-2xl cursor-pointer hover:opacity-50`,
-    account: `text-2xl ml-2 cursor-pointer hover:opacity-50`,
+    account: `text-2xl ml-2 cursor-pointer hover:opacity-50 flex flex-row items-center`,
+    name: `text-sm font-semibold ml-1`,
     cart: `text-2xl ml-2 cursor-pointer hover:opacity-50`
 }
 

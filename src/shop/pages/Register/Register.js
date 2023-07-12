@@ -2,16 +2,60 @@ import { useState } from "react"
 import className from "./className"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import Api from "../../api";
+import Utils from "../../share/Utils";
 
+const genders = {
+    0: "unset",
+    1: "female",
+    2: "male",
+}
 
 const Register = () => {
 
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
-    const [gender, setGender] = useState(0);
+    const [gender, setGender] = useState(1);
     const [birthday, setBirthday] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const isButtonActive = (() => {
+        if (!lastName || !firstName || !birthday || !email || !password) {
+            return false;
+        }
+        return true;
+    })();
+
+    const handleClick = async () => {
+        Utils.showLoading();
+        const response = await Api.auth.register({
+            lastName,
+            firstName,
+            gender: genders[gender],
+            password,
+            email,
+            status: false,
+            role: 1,
+        });
+        await Utils.wait(1000);
+        Utils.hideLoading();
+        console.log("response", response);
+        if (response.result == Api.RESULT_CODE.SUCCESS) {
+            const response1 = await Api.auth.login({
+                email,
+                password
+            });
+            if (response1.result == Api.RESULT_CODE.SUCCESS) {
+                Utils.global.accessToken = response.data.access_token;
+                const response2 = await Api.auth.getUserInformation(response.data.id);
+                console.log("response2", response2);
+            }
+        }
+        else {
+            Utils.showToastError(response?.data?.message)
+        }
+    }
 
     return (
         <div className={className.container}>
@@ -109,7 +153,12 @@ const Register = () => {
                     )}
                 </div>
                 <div className={className.action}>
-                    <div className={className.buttonLogin}>SIGN UP</div>
+                    <div
+                        className={isButtonActive ? className.buttonLogin : className.buttonLoginDisable}
+                        onClick={isButtonActive ? handleClick : undefined} >
+                        {"SIGN UP"}
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -3,9 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import * as EmailValidator from 'email-validator';
 
 import className from "./className"
 import { setAccount } from "../../share/slices/Account";
+import Utils from "../../share/Utils";
+import Api from "../../api";
 
 
 const Login = () => {
@@ -16,14 +19,42 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = () => {
-        if (email && password) {
-            dispatch(setAccount({
-                email,
-                password
-            }));
-            navigate("/");
+    const isButtonActive = (() => {
+        if (!email || !password) {
+            return false;
         }
+        return EmailValidator.validate(email);
+    })();
+
+    const handleClickLogin = async () => {
+        Utils.showLoading();
+        const response = await Api.auth.login({
+            email,
+            password
+        });
+        await Utils.wait(1000);
+        console.log("response", response);
+        if (response.result == Api.RESULT_CODE.SUCCESS) {
+            Utils.global.accessToken = response.data.access_token;
+            dispatch(setAccount(response.data.user));
+            navigate(Utils.global.nextPath ?? "/");
+            Utils.hideLoading();
+        }
+        else {
+            Utils.hideLoading();
+            if (response.data.message) {
+                if (response.data.message != "Unauthorized") {
+                    Utils.showToastError("Password is incorrect!")
+                }
+                else {
+                    Utils.showToastError("Can not find this account!");
+                }
+            }
+            else {
+                Utils.showToastError("Can not find this account!");
+            }
+        }
+        Utils.hideLoading();
     }
 
     return (
@@ -61,8 +92,8 @@ const Login = () => {
                 </div>
                 <div className={className.action}>
                     <div
-                        className={className.buttonLogin}
-                        onClick={login}>LOGIN</div>
+                        className={isButtonActive ? className.buttonLogin : className.buttonLoginDisable}
+                        onClick={isButtonActive ? handleClickLogin : undefined}>LOGIN</div>
                     <div className={className.action2}>
                         <div className={className.forgot}>Forgot password?</div>
                         <div className={className.row}>

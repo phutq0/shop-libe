@@ -41,7 +41,7 @@ const MenuLeft = () => {
         else {
             document.body.style.overflow = "unset";
         }
-    }, [show])
+    }, [show]);
 
     const [shopStyle, springShop] = useSpring(() => ({
         height: 0

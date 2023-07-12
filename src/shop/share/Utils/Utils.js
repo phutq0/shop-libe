@@ -1,4 +1,7 @@
 import _ from "lodash";
+import Loading, { loadingRef } from "./components/Loading";
+import { toast } from "react-toastify"
+import Toast from "./components/Toast";
 
 /**
  * Format className
@@ -39,4 +42,50 @@ const bind = className => {
     });
 }
 
-export { bind }
+const Utils = {
+    global: {
+        accessToken: "",
+        nextPath: null
+    },
+    bind,
+    wait: (ms) => new Promise(e => setTimeout(e, ms)),
+    showLoading: () => {
+        loadingRef.current.hide();
+        loadingRef.current.show();
+    },
+    hideLoading: () => {
+        loadingRef.current.hide();
+    },
+    showToastSuccess: (message) => {
+        toast.success(message);
+    },
+    showToastError: (message) => {
+        if (_.isArray(message)) {
+            toast.error(
+                <>
+                    {message.map((item, index) =>
+                        <span key={index}>{item}<br /></span>
+                    )}
+                </>
+            )
+        }
+        else {
+            toast.error(message)
+        }
+    }
+}
+
+const UtilComponents = () => {
+
+    return (
+        <>
+            <Toast />
+            <Loading />
+        </>
+    )
+}
+
+export default Utils
+export {
+    UtilComponents,
+}

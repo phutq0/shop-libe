@@ -3,14 +3,17 @@ import className from "./className"
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { product1 } from "../../../../components/Image";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Information = () => {
 
-    const [lastName, setLastName] = useState("");
-    const [firstName, setFirstName] = useState("");
+    const { account } = useSelector(state => state.account);
+
+    const [lastName, setLastName] = useState(account?.lastName ?? "");
+    const [firstName, setFirstName] = useState(account?.firstName ?? "");
     const [gender, setGender] = useState(0);
     const [birthday, setBirthday] = useState("");
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState(account?.email ?? "");
 
     return (
         <div className={className.wrapper}>

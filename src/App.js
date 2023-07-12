@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 
 import ShopLayout from "./shop/components/ShopLayout";
 import {
@@ -25,34 +25,32 @@ const pages = [
 	{ id: 6, path: "/cart", Layout: ShopLayout, Page: Cart },
 	{ id: 7, path: "/search", Layout: ShopLayout, Page: Search },
 	{ id: 8, path: "/checkout", Layout: ShopLayout, Page: CheckOut },
-	{ id: 9, path: "/account", Layout: ShopLayout, Page: Account },
-	{ id: 10, path: "/account/:type", Layout: ShopLayout, Page: Account },
+	{ id: 9, path: "/account", Layout: ShopLayout, Page: Account, requireLogin: true },
+	{ id: 10, path: "/account/:type", Layout: ShopLayout, Page: Account, requireLogin: true },
 ]
 
 function App() {
 	return (
-		<Provider store={store}>
-			<Router>
-				<Routes>
-					{pages.map(({ id, path, Layout, Page }) => (
-						<Route
-							key={id}
-							path={path}
-							element={
-								<Layout>
-									<Page />
-								</Layout>
-							} />
-					))}
-					{/* <Route
-						path="/"
-						element={<Home />} />
-					<Route
-						path="/product"
-						element={<Product />} /> */}
-				</Routes>
-			</Router>
-		</Provider>
+		<>
+			<Provider store={store}>
+				<Router>
+					<Routes>
+						{pages.map(({ id, path, requireLogin, Layout, Page }) => (
+							<Route
+								key={id}
+								path={path}
+								element={
+									<Layout
+										requireLogin={requireLogin}>
+										<Page />
+									</Layout>
+								} />
+						))}
+					</Routes>
+				</Router>
+			</Provider>
+
+		</>
 	);
 }
 
