@@ -1,4 +1,5 @@
 import Header from "./Header";
+import Modal from "./Modal";
 import NavBar from "./NavBar";
 
 const AdminLayout = ({ children }) => {
@@ -12,6 +13,7 @@ const AdminLayout = ({ children }) => {
                     {children}
                 </div>
             </div>
+            <Modal />
         </div>
     )
 }
