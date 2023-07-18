@@ -13,10 +13,10 @@ const className = {
     btnJoin: `w-28 ml-6 hover:opacity-50 cursor-pointer hidden md:block font-medium`,
     center: `flex-[3] flex justify-center`,
     logo: `text-5xl font-semibold cursor-pointer`,
-    right: `flex-1 flex flex-row-reverse`,
+    right: `flex-1 flex flex-row-reverse items-center`,
     search: `text-2xl cursor-pointer hover:opacity-50`,
     account: `text-2xl ml-2 cursor-pointer hover:opacity-50 flex flex-row items-center`,
-    name: `text-sm font-semibold ml-1`,
+    name: `text-sm font-semibold ml-1 hidden md:block`,
     cart: `text-2xl ml-2 cursor-pointer hover:opacity-50`
 }
 

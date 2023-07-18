@@ -11,7 +11,17 @@ const Information = () => {
 
     const [lastName, setLastName] = useState(account?.lastName ?? "");
     const [firstName, setFirstName] = useState(account?.firstName ?? "");
-    const [gender, setGender] = useState(0);
+    const [gender, setGender] = useState(() => {
+        const genders = {
+            "unset": 0,
+            "female": 1,
+            "male": 2
+        }
+        if (account) {
+            return genders[account.gender]
+        }
+        return 0;
+    });
     const [birthday, setBirthday] = useState("");
     const [email, setEmail] = useState(account?.email ?? "");
 

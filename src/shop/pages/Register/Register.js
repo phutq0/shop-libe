@@ -1,9 +1,12 @@
-import { useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import className from "./className"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import Api from "../../api";
 import Utils from "../../share/Utils";
+import { useDispatch, useSelector } from "react-redux";
+import { setAccount } from "../../share/slices/Account";
+import { useNavigate } from "react-router-dom";
 
 const genders = {
     0: "unset",
@@ -12,6 +15,10 @@ const genders = {
 }
 
 const Register = () => {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { account } = useSelector(state => state.account);
 
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -37,25 +44,35 @@ const Register = () => {
             email,
             status: false,
             role: 1,
+            avatarUrl: ""
         });
         await Utils.wait(1000);
         Utils.hideLoading();
         console.log("response", response);
         if (response.result == Api.RESULT_CODE.SUCCESS) {
+            localStorage.setItem('account', JSON.stringify({ email, password }));
             const response1 = await Api.auth.login({
                 email,
                 password
             });
+            console.log("response1", response1);
             if (response1.result == Api.RESULT_CODE.SUCCESS) {
                 Utils.global.accessToken = response.data.access_token;
-                const response2 = await Api.auth.getUserInformation(response.data.id);
-                console.log("response2", response2);
+                dispatch(setAccount(response1.data.userInfo));
+                navigate(Utils.global.nextPath ?? "/");
+                Utils.hideLoading();
             }
         }
         else {
             Utils.showToastError(response?.data?.message)
         }
     }
+
+    useLayoutEffect(() => {
+        if (account) {
+            navigate(Utils.global.nextPath ?? "/");
+        }
+    }, [account]);
 
     return (
         <div className={className.container}>

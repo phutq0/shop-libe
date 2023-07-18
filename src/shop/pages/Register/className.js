@@ -10,11 +10,11 @@ const className = {
     `,
     border: `h-12 mt-6 flex bg-gray-100 rounded relative`,
     input: `
-        outline-none bg-gray-100 flex-1 pl-4 pr-7
+        outline-none bg-gray-100 flex-1 pl-4 pr-7 rounded
         focus-within:bg-white focus-within:border
     `,
     input2: `
-        outline-none bg-gray-100 flex-1 px-4
+        outline-none bg-gray-100 flex-1 px-4 rounded
         focus-within:bg-white focus-within:border
     `,
     clear: `absolute top-4 right-2 cursor-pointer text-gray-600 hover:opacity-70`,

@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as EmailValidator from 'email-validator';
 
 import className from "./className"
@@ -14,7 +14,8 @@ import Api from "../../api";
 const Login = () => {
 
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const { account } = useSelector(state => state.account);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -35,8 +36,9 @@ const Login = () => {
         await Utils.wait(1000);
         console.log("response", response);
         if (response.result == Api.RESULT_CODE.SUCCESS) {
+            localStorage.setItem('account', JSON.stringify({ email, password }));
             Utils.global.accessToken = response.data.access_token;
-            dispatch(setAccount(response.data.user));
+            dispatch(setAccount(response.data.userInfo));
             navigate(Utils.global.nextPath ?? "/");
             Utils.hideLoading();
         }
@@ -56,6 +58,12 @@ const Login = () => {
         }
         Utils.hideLoading();
     }
+
+    useLayoutEffect(() => {
+        if (account) {
+            navigate(Utils.global.nextPath ?? "/");
+        }
+    }, [account]);
 
     return (
         <div className={className.container}>

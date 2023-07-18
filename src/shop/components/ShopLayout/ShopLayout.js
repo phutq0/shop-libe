@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CartRight from "../CartRight";
 import Footer from "../Footer";
 import Header from "../Header";
@@ -9,12 +9,14 @@ import { UtilComponents } from "../../share/Utils";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLayoutEffect } from "react";
+import LoadingContainer from "../LoadingContainer/LoadingContainer";
 
 
 const ShopLayout = ({ children, requireLogin }) => {
 
     const navigate = useNavigate();
     const { account } = useSelector(state => state.account);
+    const { isAppLoading } = useSelector(state => state.app)
 
     useEffect(() => {
         if (requireLogin) {
@@ -22,7 +24,7 @@ const ShopLayout = ({ children, requireLogin }) => {
                 navigate("/login")
             }
         }
-    }, [])
+    }, []);
 
     useEffect(() => {
         window.scrollTo({
@@ -33,16 +35,20 @@ const ShopLayout = ({ children, requireLogin }) => {
 
     return (
         <>
-            <div className="flex flex-col items-center w-full">
-                <Header />
-                {children}
-                <Footer />
-                <MenuLeft />
-                <SearchRight />
-                <CartRight />
-                <ScrollToTop />
-                <UtilComponents />
+            {isAppLoading && <LoadingContainer />}
+            <div style={{ height: isAppLoading ? 0 : undefined, overflow: "hidden" }}>
+                <div className="flex flex-col items-center w-full">
+                    <Header />
+                    {children}
+                    <Footer />
+                    <MenuLeft />
+                    <SearchRight />
+                    <CartRight />
+                    <ScrollToTop />
+                    <UtilComponents />
+                </div>
             </div>
+
         </>
     );
 }

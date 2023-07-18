@@ -17,11 +17,11 @@ const className = {
     border: `h-12 flex flex-1 bg-gray-100 rounded relative`,
     input: `
         outline-none bg-gray-100 flex-1 pl-4 pr-8 text-sm
-        focus-within:bg-white focus-within:border
+        focus-within:bg-white focus-within:border rounded
     `,
     input2: `
         outline-none bg-gray-100 flex-1 px-4 text-sm
-        focus-within:bg-white focus-within:border
+        focus-within:bg-white focus-within:border rounded
     `,
     clear: `absolute top-4 right-3 cursor-pointer text-gray-600 hover:opacity-70`,
     clear2: `absolute top-4 right-9 cursor-pointer text-gray-600 hover:opacity-70`,
@@ -32,7 +32,7 @@ const className = {
     label2: `font-bold ml-2 text-sm`,
     buttonSave: `
         mt-2 mb-4 px-5 py-2 text-sm font-semibold cursor-pointer
-        border rounder-sm hover:bg-black hover:text-white    
+        border border-gray-300 rounder-sm hover:bg-black hover:text-white    
     `
 }
 
