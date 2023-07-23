@@ -7,7 +7,7 @@ const className = {
     name: `text-5xl font-bold`,
     top: `flex justify-between px-6 py-3`,
     collectionName: ``,
-    content: `px-3`
+    content: `px-3 flex flex-col items-center`
 }
 
 export default className

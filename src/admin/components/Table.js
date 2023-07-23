@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSpring, animated } from "@react-spring/web";
 import Tippy from "@tippyjs/react/headless";
 import _ from "lodash";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 const Table = ({
     header, body, isLoading, isEmpty, step, page, total,
-    name, placeholder, showButtonDelete, onChangeStep, onChangePage
+    name, placeholder, showButtonDelete, onChangeStep, onChangePage,
+    showButtonAdd, onClickAdd
 }) => {
 
     return (
@@ -27,7 +28,9 @@ const Table = ({
                         className="w-40 h-8 outline-none border rounded border-gray-300 bg-gray-50 focus-within:bg-white pl-2 text-sm font-semibold text-gray-500"
                         placeholder={placeholder}
                     />
-                    <div className="flex items-center justify-center text-sm font-semibold border rounded bg-green-500 cursor-pointer hover:opacity-80 text-white px-6 ml-3">
+                    <div
+                        className="flex items-center justify-center text-sm font-semibold border rounded bg-green-500 cursor-pointer hover:opacity-80 text-white px-6 ml-3"
+                        onClick={onClickAdd}>
                         <FontAwesomeIcon
                             icon={faPlus}
                             className="mr-2" />
@@ -36,16 +39,16 @@ const Table = ({
                 </div>
             </div>
             {header}
-            <div className="min-h-[200px] relative">
+            <div className="min-h-[200px] relative flex flex-col">
                 {isLoading ?
-                    <div className="w-full h-full flex items-center justify-center pt-4">
+                    <div className="w-full flex-1 flex items-center justify-center">
                         <Spinner
                             className="w-5 h-5 !border-2" />
                         <div className="font-semibold text-sm ml-2">Loading...</div>
                     </div>
                     : body
                 }
-                {isEmpty && (
+                {!isLoading && isEmpty && (
                     <div className="w-full h-full flex items-center justify-center pt-12">
                         <div className="text-sm font-semibold">No data!</div>
                     </div>
@@ -86,7 +89,7 @@ const Pagination = ({ step, page, total, onChangeStep, onChangePage }) => {
                         icon={faAngleLeft}
                     />
                 </div>
-                {(page > total - 2 && page > 3) &&
+                {(page > total - 2 && total > 3) &&
                     <div className="h-9 w-9 mx-1 bg-gray-100 rounded flex items-center justify-center text-gray-700 text-sm cursor-pointer font-semibold border border-gray-200 hover:bg-black hover:text-white">
                         {"..."}
                     </div>}
@@ -217,7 +220,7 @@ const Step = ({ onChangeStep, step }) => {
     )
 }
 
-const Spinner = ({ className }) => {
+const Spinner = memo(({ className }) => {
 
     return (
         <div
@@ -227,6 +230,6 @@ const Spinner = ({ className }) => {
                 className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
         </div>
     );
-}
+})
 
 export default Table

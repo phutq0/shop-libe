@@ -1,7 +1,6 @@
 import _ from "lodash";
 import Loading, { loadingRef } from "./components/Loading";
 import { toast } from "react-toastify"
-import Toast from "./components/Toast";
 
 /**
  * Format className
@@ -72,6 +71,11 @@ const Utils = {
         else {
             toast.error(message)
         }
+    },
+    convertToPath: (name = "", id) => {
+        const name_ = name.toLowerCase().split(" ").join("-");
+        const path = name_ + "-" + String(id);
+        return path;
     }
 }
 
@@ -79,7 +83,7 @@ const UtilComponents = () => {
 
     return (
         <>
-            <Toast />
+
             <Loading />
         </>
     )

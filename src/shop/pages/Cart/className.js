@@ -2,7 +2,7 @@ const className = {
     container: `w-full flex flex-col min-h-[32rem] px-3 md:px-10 xl:px-20`,
     title: `text-3xl font-semibold text-center py-6`,
     description: `text-center`,
-    content: `flex flex-col mt-4 `,
+    content: `flex flex-col mt-4 min-h-[200px]`,
     item: `relative h-44 flex py-3 border-t border-gray-400`,
     clear: `absolute top-2 right-2 text-lg hover:opacity-50 cursor-pointer`,
     image: `h-full border rounded-sm`,

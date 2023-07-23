@@ -1,59 +1,87 @@
 import { faGear, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Table } from "admin/components"
-import { useState } from "react"
+import { modalCollectionRef } from "admin/components/Modal"
+import { useEffect, useRef, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import Api from "shop/api"
+import Utils from "shop/share/Utils"
+import { setPage, setStep, thunkGetCollection } from "shop/share/slices/Collection"
 
 const Collection = () => {
 
-    const list = [
-        { id: 1, name: "Quần què", number: 20 },
-        { id: 2, name: "Áo phao", number: 20 },
-        { id: 3, name: "Áo sơ mi", number: 20 },
-        { id: 4, name: "Nón lá", number: 20 },
-        { id: 3, name: "Áo sơ mi", number: 20 },
-        { id: 4, name: "Nón lá", number: 20 },
-        { id: 3, name: "Áo sơ mi", number: 20 },
-        { id: 4, name: "Nón lá", number: 20 },
-    ]
+    const dispatch = useDispatch();
 
-    const [step, setStep] = useState(5);
-    const [page, setPage] = useState(1);
+    const { isLoading, step, page, total, listCollection } = useSelector(state => state.collection);
+    const ref = useRef(false);
 
+    const handleCreate = () => {
+        modalCollectionRef.current.show({
+            type: "CREATE",
+            onConfirm: async (formData) => {
+                const response = await Api.collection.createCollection(formData);
+                Utils.showToastSuccess("Create product successfully!");
+                modalCollectionRef.current.hide();
+                dispatch(thunkGetCollection({
+                    page: page,
+                    pageSize: step
+                }));
+            }
+        })
+    }
+
+    useEffect(() => {
+        dispatch(thunkGetCollection({
+            page: page,
+            pageSize: step
+        }));
+    }, [step, page])
 
     return (
         <div className="p-4">
             <Table
                 name={"Collection"}
                 showButtonDelete={true}
-                isLoading={false}
-                isEmpty={list.length == 0}
-                total={10}
+                isLoading={isLoading}
+                isEmpty={listCollection.length == 0}
+                total={Math.ceil(total / step) || 1}
                 page={page}
-                onChangePage={page => setPage(page)}
+                onChangePage={page => dispatch(setPage(page))}
                 step={step}
-                onChangeStep={step => setStep(step)}
+                onChangeStep={step => dispatch(setStep(step))}
+                onClickAdd={handleCreate}
                 header={
-                    <div className="flex flex-row bg-red-50 text-sm font-semibold py-2 items-center">
-                        <div className="flex-[1] text-center">{"ID"}</div>
-                        <div className="flex-[3] text-center">{"Name"}</div>
-                        <div className="flex-[1] text-center">{"Number Product"}</div>
-                        <div className="flex-[1] text-center">Actions</div>
+                    <div className="flex flex-row text-sm font-semibold py-2 items-center">
+                        <div className="flex-[1] text-center text-gray-400">ID</div>
+                        <div className="flex-[3] text-center text-gray-400">NAME</div>
+                        <div className="flex-[1] text-center text-gray-400">NUMBER PRODUCT</div>
+                        <div className="flex-[1] text-center text-gray-400">MANAGE</div>
                     </div>
                 }
                 body={
                     <div className="flex flex-col">
-                        {list.map((item, index) => (
-                            <div className={"flex flex-row text-sm border-t border-b border-gray-100 font-semibold py-1 h-14 items-center hover:bg-gray-100 cursor-pointer " + (index % 2 == 0 ? "bg-gray-50" : "")}>
+                        {listCollection.map((item, index) => (
+                            <div
+                                key={item.id ?? index}
+                                className={"flex flex-row text-sm border-t border-b border-gray-100 font-semibold py-1 h-14 items-center hover:bg-gray-100 cursor-pointer " + (index % 2 == 0 ? "bg-gray-50" : "")}>
                                 <div className="flex-[1] text-center">{item.id}</div>
                                 <div className="flex-[3] line-clamp-2">{item.name}</div>
-                                <div className="flex-[1] text-center">{item.number}</div>
+                                <div className="flex-[1] text-center">{item.number ?? 10}</div>
                                 <div className="flex-[1] text-center text-lg text-gray-500">
                                     <FontAwesomeIcon
                                         className="hover:text-blue-600"
                                         icon={faGear} />
                                     <FontAwesomeIcon
                                         icon={faTrashCan}
-                                        className="ml-2 hover:text-red-600" />
+                                        className="ml-2 hover:text-red-600"
+                                        onClick={async () => {
+                                            await Api.collection.deleteCollection(item.id);
+                                            Utils.showToastSuccess("Delete successfully!");
+                                            dispatch(thunkGetCollection({
+                                                page: page,
+                                                pageSize: step
+                                            }));
+                                        }} />
                                 </div>
                             </div>
                         ))}

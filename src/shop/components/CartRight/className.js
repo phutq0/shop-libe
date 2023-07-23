@@ -37,7 +37,8 @@ const className = {
         h-12 flex-1 mx-1 flex items-center justify-center
         cursor-pointer border rounded-sm border-gray-500
         text-sm font-semibold hover:bg-black hover:text-white
-    `
+    `,
+    notFound: "text-center font-semibold pt-10"
 }
 
 Utils.bind(className);

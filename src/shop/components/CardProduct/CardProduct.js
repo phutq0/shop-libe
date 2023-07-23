@@ -1,13 +1,14 @@
 import { useState } from "react"
 import className from "./className"
 import { useNavigate } from "react-router-dom";
+import Utils from "shop/share/Utils";
 
 
 const CardProduct = ({ item }) => {
 
     const navigate = useNavigate();
 
-    const [image, setImage] = useState(item.image1);
+    const [focus, setFocus] = useState(false);
     const status = (() => {
         if (!item.status) {
             return;
@@ -40,15 +41,26 @@ const CardProduct = ({ item }) => {
     return (
         <div
             className={className.wrapper}
-            onClick={() => navigate("/product")}>
+            onClick={() => {
+                const path = Utils.convertToPath(item.name, item.id);
+                navigate(`/product/${path}`)
+            }}>
+
             <div className={className.content}>
-                <img
-                    src={image}
-                    className={className.image}
-                    alt={item.name}
-                    onMouseOver={() => setImage(item.image2)}
-                    onMouseLeave={() => setImage(item.image1)}
-                />
+                <div
+                    className="relative"
+                    onMouseOver={() => setFocus(true)}
+                    onMouseOut={() => setFocus(false)}>
+                    <img
+                        src={item.images[0] ?? ""}
+                        className={className.image}
+                        alt={item.name} />
+                    <img
+                        className="absolute top-0 left-0 right-0 w-full rounded-sm border border-gray-300"
+                        style={{ opacity: focus ? 1 : 0 }}
+                        src={item.images[1] ?? ""}
+                        alt={item.name} />
+                </div>
                 <div className={className.name}>{item.name}</div>
                 <div className={className.price}>
                     {item.salePrice && (

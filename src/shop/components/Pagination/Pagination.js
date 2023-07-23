@@ -5,11 +5,12 @@ import { faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight } from
 const Pagination = ({
     total,
     page,
-    setPage
+    setPage,
+    classNames
 }) => {
 
     return (
-        <div className={className.wrapper}>
+        <div className={className.wrapper + " " + classNames}>
             <div
                 onClick={() => setPage(1)}
                 className={className.button}>

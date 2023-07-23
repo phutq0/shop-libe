@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import className from "./className"
 import SelectSort from "../../components/SelectSort";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListProduct from "../../components/ListProduct";
 import { products } from "../../share/data";
+import Pagination from "shop/components/Pagination/Pagination";
+import Api from "shop/api";
 
 const datas = [
     {
@@ -45,13 +47,31 @@ const Collection = () => {
         display: "Sắp xếp theo"
     });
 
+    const [products, setProducts] = useState([]);
+
+    const loadData = async () => {
+        const response = await Api.product.getListProduct({
+            page: 1,
+            pageSize: 100
+        });
+        console.log(response);
+        setProducts(response.data.productList.map(item => ({
+            ...item,
+            images: item.imageProduct.map(item => item.imageLink)
+        })));
+    }
+
+    useEffect(() => {
+        loadData();
+    }, [])
+
     return (
         <div className={className.container}>
             <div className={className.header}>
-                <div className={className.name}>{"NEW IN"}</div>
+                <div className={className.name}>{"ALL"}</div>
             </div>
             <div className={className.top}>
-                <div className={className.collectionName}>NEW IN</div>
+                <div className={className.collectionName}>ALL</div>
                 <SelectSort
                     classNames={1}
                     data={datas}
@@ -61,6 +81,11 @@ const Collection = () => {
             <div className={className.content}>
                 <ListProduct
                     data={products} />
+                <Pagination
+                    classNames="mt-6"
+                    total={1}
+                    page={1}
+                />
             </div>
         </div>
     )

@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import className from "./className";
 import { product1, product2, product3 } from "../../components/Image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { setListProductDetail, thunkGetCart } from "shop/share/slices/Cart";
+import Api from "shop/api";
+import Utils from "shop/share/Utils";
+import { useNavigate } from "react-router-dom";
 
 const data_ = [
     {
@@ -79,7 +84,29 @@ const data_ = [
 
 const Cart = () => {
 
-    const [data, setData] = useState([...data_]);
+    const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    const { listProduct, listProductDetail } = useSelector(state => state.cart);
+
+    const getData = async () => {
+        const data = [];
+        for (const item of listProduct) {
+            const response = await Api.product.getProductInformation(item.productId);
+            const product = response.data.product;
+            data.push({
+                ...product,
+                images: product.imageProduct.map(item => item.imageLink),
+                detail: JSON.parse(product.detail ?? "{}")
+            })
+        }
+        dispatch(setListProductDetail(data))
+    }
+
+    useEffect(() => {
+        getData();
+    }, [listProduct])
 
     return (
         <div className={className.container}>
@@ -87,36 +114,38 @@ const Cart = () => {
                 YOUR SHOPPING CART
             </div>
             <div className={className.description}>
-                {`${data.length} item(s) in your cart`}
+                {`${listProductDetail.length} item(s) in your cart`}
             </div>
             <div className={className.content}>
-                {data.map((item, index) => (
+                {listProductDetail.map((item, index) => (
                     <div
                         key={item.id ?? index}
                         className={className.item}>
                         <img
                             className={className.image}
-                            src={item.image} />
+                            src={item.images[0]} />
                         <div className={className.infor}>
                             <div className={className.name}>{item.name}</div>
                             <div className={className.att}>
-                                {item.color} / {item.material} / {item.size}
+                                {item.detail.color.split("|").at(0)} / {item.detail.material.split("|").at(0)} / {item.detail.size.split("|").at(0)}
                             </div>
                             <div className={className.number}>
                                 <div
                                     className={className.buttonAdd}
                                     onClick={() => {
+                                        return;
                                         item.number = item.number - 1;
                                         setData([...data])
                                     }}>
                                     -
                                 </div>
                                 <div className={className.count}>
-                                    {item.number}
+                                    {item.number ?? 1}
                                 </div>
                                 <div
                                     className={className.buttonAdd}
                                     onClick={() => {
+                                        return;
                                         item.number = item.number + 1;
                                         setData([...data])
                                     }}>
@@ -126,12 +155,14 @@ const Cart = () => {
                             <div className={className.price}>{item.price.toLocaleString()}₫</div>
                         </div>
                         <div className={className.sumPrice}>
-                            {(item.number * item.price).toLocaleString()}₫
+                            {(item.price).toLocaleString()}₫
                         </div>
                         <div
                             className={className.clear}
-                            onClick={() => {
-
+                            onClick={async () => {
+                                const response = await Api.cart.removeFromCart(item.id);
+                                Utils.showToastSuccess('Remove successfully!')
+                                dispatch(thunkGetCart());
                             }}>
                             <FontAwesomeIcon
                                 icon={faCircleXmark} />
@@ -141,10 +172,12 @@ const Cart = () => {
             </div>
             <div className={className.total}>
                 <div>TOTAL</div>
-                <div>{data.reduce((prev, item) => prev + item.number * item.price, 0).toLocaleString()}₫</div>
+                <div>{listProductDetail.reduce((prev, item) => prev + item.price, 0).toLocaleString()}₫</div>
             </div>
             <div className={className.bottom}>
-                <div className={className.button}>
+                <div
+                    className={className.button}
+                    onClick={() => navigate("/")}>
                     CONTINUE SHOPPING
                 </div>
                 <div className={className.button}>

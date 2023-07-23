@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { product1, product2, product3, product4, product5, product6 } from "../../components/Image";
 import className from "./className";
+import { useParams } from "react-router-dom";
+import Api from "shop/api";
+import Utils from "shop/share/Utils";
+import { useDispatch } from "react-redux";
+import { thunkGetCart } from "shop/share/slices/Cart";
 
 const product_ = {
     id: 1,
@@ -30,17 +35,56 @@ const product_ = {
     ]
 }
 
+const color_ = {
+    "black": "000000",
+    "white": "ffffff",
+    "blue": "1167b1",
+    "green": "4aa02c",
+    "yellow": "fee12b",
+    "coral": "ff7f4f"
+}
+
 const Product = () => {
+
+    const dispatch = useDispatch()
 
     const [product, setProduct] = useState(product_);
     const [number, setNumber] = useState(1);
 
+    const { product: path } = useParams();
+    const [productId, setProductId] = useState(() => {
+        return Number(path.split("-").at(-1));
+    });
+
+    const loadData = async () => {
+        const response = await Api.product.getProductInformation(productId);
+        const detail = JSON.parse(response.data.product.detail);
+        setProduct({
+            ...response.data.product,
+            images: response.data.product.imageProduct.map(item => item.imageLink),
+            materials: detail.material.split("|").map(item => ({ name: item, selected: false })),
+            sizes: detail.size.split("|").map(item => ({ name: item, selected: false })),
+            colors: detail.color.split("|").map(item => ({ name: item, selected: false, hex: color_[item.toLowerCase()] })),
+            detail: detail
+        })
+    }
+
+    const handleAddToCart = async () => {
+        const response = await Api.cart.addToCart(productId);
+        Utils.showToastSuccess("Add successfully!");
+        dispatch(thunkGetCart());
+    }
+
+    useEffect(() => {
+        loadData()
+    }, [])
+
     return (
         <div className={className.container}>
             <div className={className.path}>
-                <div className={className.collection}>Tops</div>
+                <div className={className.collection}>Product</div>
                 /
-                <div className={className.product}>Yellow U-neck Tank Top</div>
+                <div className={className.product}>{product.name}</div>
             </div>
             <div className={className.content}>
                 <div className={className.listImage}>
@@ -60,7 +104,7 @@ const Product = () => {
                             {product.price.toLocaleString()}₫
                         </div>
                         <div className={className.colors}>
-                            {product.colors.map((item, index) => (
+                            {product.colors?.map((item, index) => (
                                 <div
                                     key={index}
                                     className={className.itemColor}
@@ -83,7 +127,7 @@ const Product = () => {
                             ))}
                         </div>
                         <div className={className.material}>
-                            {product.materials.map((item, index) => (
+                            {product.materials?.map((item, index) => (
                                 <div
                                     key={index}
                                     className={item.selected ? className.materialSelected : className.materialItem}
@@ -99,7 +143,7 @@ const Product = () => {
                             ))}
                         </div>
                         <div className={className.size}>
-                            {product.sizes.map((item, index) => (
+                            {product.sizes?.map((item, index) => (
                                 <div
                                     key={index}
                                     className={item.selected ? className.sizeSelected : className.sizeItem}
@@ -134,12 +178,24 @@ const Product = () => {
                                 {"+"}
                             </div>
                         </div>
-                        <div className={className.buttonAdd}>
+                        <div
+                            className={className.buttonAdd}
+                            onClick={handleAddToCart}>
                             ADD TO BAG
                         </div>
                         <div className={className.buttonAdd}>
                             FIND YOUR SIZE
                         </div>
+                        <textarea
+                            className="mt-6 h-[1000px] text-sm font-semibold outline-none"
+                            value={product.detail?.description}
+                            readOnly />
+                        {/* <video controls autoPlay>
+                            <source
+                                src="https://s3-ap-southeast-1.amazonaws.com/httt-s3-bucket/video/f4096e75-644f-4745-a025-55abd8f6a3ce/Sang%20Qi%20x%20Bai%20Fengxi%20%F0%9F%94%A5%20%23zhaolusi%20%23%E8%B5%B5%E9%9C%B2%E6%80%9D%20%23rosyzhao%20%23cdrama.mp4?AWSAccessKeyId=AKIA6P2VZ5JDPO4RLHUC&Expires=1720100273&Signature=Rcp4Xk9kKYQP%2FkO8F4X73wnBEgg%3D"
+
+                                type="video/mp4" />
+                        </video> */}
                     </div>
                 </div>
             </div>

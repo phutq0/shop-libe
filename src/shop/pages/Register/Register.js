@@ -40,11 +40,12 @@ const Register = () => {
             lastName,
             firstName,
             gender: genders[gender],
+            dateOfBirth: birthday,
             password,
             email,
             status: false,
             role: 1,
-            avatarUrl: ""
+            // avatarUrl: ""
         });
         await Utils.wait(1000);
         Utils.hideLoading();

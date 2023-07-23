@@ -6,6 +6,10 @@ import { useSpring, animated } from "@react-spring/web";
 import className from "./className";
 import { product1, product2, product3 } from "../Image";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setListProductDetail, thunkGetCart } from "shop/share/slices/Cart";
+import Api from "shop/api";
+import Utils from "shop/share/Utils";
 
 const cartRightRef = createRef();
 
@@ -85,6 +89,9 @@ const data_ = [
 const CartRight = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { listProduct, listProductDetail } = useSelector(state => state.cart);
 
     const [show, setShow] = useState(false);
     const [data, setData] = useState([...data_])
@@ -119,6 +126,20 @@ const CartRight = () => {
         }
     }, [show]);
 
+    const getData = async () => {
+        const data = [];
+        for (const item of listProduct) {
+            const response = await Api.product.getProductInformation(item.productId);
+            const product = response.data.product;
+            data.push({
+                ...product,
+                images: product.imageProduct.map(item => item.imageLink),
+                detail: JSON.parse(product.detail ?? "{}")
+            })
+        }
+        dispatch(setListProductDetail(data))
+    }
+
     useEffect(() => {
         cartRightRef.current = {
             show: () => {
@@ -126,7 +147,12 @@ const CartRight = () => {
                 setShow(true);
             }
         }
+        dispatch(thunkGetCart());
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [listProduct]);
 
     return (
         <div>
@@ -149,51 +175,55 @@ const CartRight = () => {
                         icon={faCircleXmark} />
                 </div>
                 <div className={className.title}>CART</div>
-                {/* <div className={className.notFound}>
+                {listProductDetail.length == 0 && (
+                    <div className={className.notFound}>
                         Không có sản phẩm nào...
-                    </div> */}
-
+                    </div>
+                )}
                 <div className={className.data}>
-                    {data.map((item, index) => (
+                    {listProductDetail.map((item, index) => (
                         <div
                             key={item.id ?? index}
-                            className={className.item}
-                        >
+                            className={className.item}>
                             <img
                                 className={className.image}
-                                src={item.image} />
+                                src={item.images[0]} />
                             <div className={className.infor}>
                                 <div className={className.name}>{item.name}</div>
                                 <div className={className.att}>
-                                    {item.color} / {item.material} / {item.size}
+                                    {item.detail.color.split("|").at(0)} / {item.detail.material.split("|").at(0)} / {item.detail.size.split("|").at(0)}
                                 </div>
                                 <div className={className.number}>
                                     <div
                                         className={className.buttonAdd}
                                         onClick={() => {
+                                            return;
                                             item.number = item.number - 1;
                                             setData([...data])
                                         }}>
                                         -
                                     </div>
                                     <div className={className.count}>
-                                        {item.number}
+                                        {item.number ?? 1}
                                     </div>
                                     <div
                                         className={className.buttonAdd}
                                         onClick={() => {
+                                            return;
                                             item.number = item.number + 1;
                                             setData([...data])
                                         }}>
                                         +
                                     </div>
                                 </div>
-                                <div className={className.price}>{item.price}₫</div>
+                                <div className={className.price}>{item.price.toLocaleString()}₫</div>
                             </div>
                             <div
                                 className={className.clear}
-                                onClick={() => {
-
+                                onClick={async () => {
+                                    const response = await Api.cart.removeFromCart(item.id);
+                                    Utils.showToastSuccess('Remove successfully!')
+                                    dispatch(thunkGetCart());
                                 }}>
                                 <FontAwesomeIcon
                                     icon={faCircleXmark} />
@@ -204,7 +234,7 @@ const CartRight = () => {
                 <div className={className.bottom}>
                     <div className={className.total}>
                         <div>TOTAL</div>
-                        <div>2,800,000₫</div>
+                        <div>{listProductDetail.reduce((prev, item) => prev + item.price, 0).toLocaleString()}₫</div>
                     </div>
                     <div className={className.row}>
                         <div
@@ -216,7 +246,13 @@ const CartRight = () => {
                             }}>
                             SEE YOUR BAG
                         </div>
-                        <div className={className.button}>
+                        <div
+                            className={className.button}
+                            onClick={() => {
+                                startHideCartRight();
+                                setShow(false);
+                                navigate("/checkout")
+                            }}>
                             CHECKOUT
                         </div>
                     </div>

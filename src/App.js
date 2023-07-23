@@ -29,10 +29,11 @@ import {
 	User
 } from "./admin/pages";
 import { AdminLayout } from "./admin/components";
+import Toast from "shop/share/Utils/components/Toast";
 
 const pages = [
 	{ id: 0, path: "/", Layout: ShopLayout, Page: Home },
-	{ id: 1, path: "/product", Layout: ShopLayout, Page: Product },
+	{ id: 1, path: "/product/:product", Layout: ShopLayout, Page: Product },
 	{ id: 2, path: "/login", Layout: ShopLayout, Page: Login },
 	{ id: 3, path: "/register", Layout: ShopLayout, Page: Register },
 	{ id: 4, path: "/collection", Layout: ShopLayout, Page: Collection },
@@ -68,6 +69,7 @@ function App() {
 							} />
 					))}
 				</Routes>
+				<Toast />
 				<AppStart />
 			</Router>
 		</Provider>
@@ -80,6 +82,9 @@ const AppStart = () => {
 
 	useEffect(() => {
 		const rememberLogin = async () => {
+			await Utils.wait(1000);
+			dispatch(setIsAppLoading(false));
+			return;
 			const { email, password } = JSON.parse(localStorage.getItem("account")) ?? {};
 			if (email && password) {
 				const response = await Api.auth.login({

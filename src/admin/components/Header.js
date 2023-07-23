@@ -34,9 +34,9 @@ const Notification = (notify) => {
                 )}>
                 <div className="p-1 relative cursor-pointer hover:opacity-80">
                     {notify && (
-                        <div class="absolute flex h-[10px] w-[10px] right-0 top-1">
-                            <div class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></div>
-                            <div class="relative inline-flex rounded-full h-[10px] w-[10px] bg-sky-500"></div>
+                        <div className="absolute flex h-[10px] w-[10px] right-0 top-1">
+                            <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></div>
+                            <div className="relative inline-flex rounded-full h-[10px] w-[10px] bg-sky-500"></div>
                         </div>
                     )}
                     <FontAwesomeIcon
@@ -63,9 +63,9 @@ const Message = (notify) => {
                 )}>
                 <div className="p-1 relative cursor-pointer hover:opacity-80 ml-3">
                     {notify && (
-                        <div class="absolute flex h-[10px] w-[10px] right-0 top-1">
-                            <div class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></div>
-                            <div class="relative inline-flex rounded-full h-[10px] w-[10px] bg-sky-500"></div>
+                        <div className="absolute flex h-[10px] w-[10px] right-0 top-1">
+                            <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></div>
+                            <div className="relative inline-flex rounded-full h-[10px] w-[10px] bg-sky-500"></div>
                         </div>
                     )}
                     <FontAwesomeIcon

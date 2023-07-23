@@ -21,6 +21,7 @@ baseApi.interceptors.request.use(async (config) => {
             : JSON.stringify(config.params)
         }`
     );
+    Utils.global.accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJwaHVsZUBnbWFpbC5jb20iLCJyb2xlIjoxLCJpYXQiOjE2OTAwOTI1MDcsImV4cCI6MTY5MDk1NjUwN30.2zBUmkj3i14MvwPNv7FVTA45cX2M-d-9ldO5AFxLwCQ";
     const accessToken = Utils.global.accessToken;
     if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
@@ -30,7 +31,7 @@ baseApi.interceptors.request.use(async (config) => {
 
 baseApi.interceptors.response.use(
     (response) => {
-        console.log(JSON.stringify(response));
+        console.log("[RESPONSE]:", response);
         return {
             result: RESULT_CODE.SUCCESS,
             data: response.data,

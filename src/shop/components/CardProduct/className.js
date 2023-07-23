@@ -1,6 +1,6 @@
 const className = {
     wrapper: `w-1/2 md:w-1/3 lg:w-1/4 2xl:w-1/5`,
-    content: `px-2 py-3 relative cursor-pointer`,
+    content: `px-2 py-3 relative cursor-pointer flex flex-col`,
     image: `rounded-sm border border-gray-300`,
     name: `mt-1 text-sm font-semibold line-clamp-1`,
     price: `flex mt-1`,
