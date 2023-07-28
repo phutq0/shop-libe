@@ -2,11 +2,11 @@ import { useLayoutEffect, useState } from "react"
 import className from "./className"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-import Api from "../../api";
 import Utils from "../../share/Utils";
 import { useDispatch, useSelector } from "react-redux";
 import { setAccount } from "../../share/slices/Account";
 import { useNavigate } from "react-router-dom";
+import Api from "api2";
 
 const genders = {
     0: "unset",
@@ -36,7 +36,7 @@ const Register = () => {
 
     const handleClick = async () => {
         Utils.showLoading();
-        const response = await Api.auth.register({
+        const response = Api.account.register({
             lastName,
             firstName,
             gender: genders[gender],
@@ -50,22 +50,21 @@ const Register = () => {
         await Utils.wait(1000);
         Utils.hideLoading();
         console.log("response", response);
-        if (response.result == Api.RESULT_CODE.SUCCESS) {
-            localStorage.setItem('account', JSON.stringify({ email, password }));
-            const response1 = await Api.auth.login({
+        if (response.result == "success") {
+            const response1 = Api.account.login({
                 email,
                 password
             });
             console.log("response1", response1);
-            if (response1.result == Api.RESULT_CODE.SUCCESS) {
-                Utils.global.accessToken = response.data.access_token;
-                dispatch(setAccount(response1.data.userInfo));
+            if (response1.result == "success") {
+                localStorage.setItem('account', JSON.stringify(response1.account));
+                dispatch(setAccount(response1.account));
                 navigate(Utils.global.nextPath ?? "/");
                 Utils.hideLoading();
             }
         }
         else {
-            Utils.showToastError(response?.data?.message)
+            Utils.showToastError(response?.message)
         }
     }
 

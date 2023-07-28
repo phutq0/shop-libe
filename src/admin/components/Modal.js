@@ -34,7 +34,6 @@ const CollectionModal = () => {
     const [config, setConfig] = useState({ ...defaultConfig });
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [image, setImage] = useState(null);
 
     useEffect(() => {
         modalCollectionRef.current = {
@@ -48,44 +47,32 @@ const CollectionModal = () => {
         }
     }, []);
 
-    const onAddImage = () => {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/png";
-        input.onchange = e => {
-            const file = {
-                file: e.target.files[0],
-                link: URL.createObjectURL(e.target.files[0])
-            }
-            setImage(file)
-            e.target.files = null;
-        }
-        input.click();
-        input.remove();
-    }
+    const [color, setColor] = useState("#00ffff");
 
     const onClickRight = () => {
         if (!name || !description) {
             return;
         }
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("description", description);
-        if (image) {
-            formData.append("files", image.file);
+        const params = {
+            name,
+            description,
+            color,
+            collectionId: config.collection.collectionId
         }
-        config.onConfirm(formData);
+        config.onConfirm(params);
     }
 
     useEffect(() => {
         if (show) {
             if (config.type == "UPDATE") {
-
+                setName(config.collection.name ?? "");
+                setDescription(config.collection.description ?? "");
+                setColor(config.collection.color ?? "#00ffff");
             }
             else {
                 setName("");
                 setDescription("");
-                setImage(null);
+                setColor("#00ffff");
             }
         }
     }, [show])
@@ -119,40 +106,18 @@ const CollectionModal = () => {
                                         onChange={e => setDescription(e.target.value)} />
                                 </div>
                                 <div className="flex flex-row text-sm m-3">
-                                    <div className="font-semibold min-w-[100px]">Image:</div>
-                                    <div className="flex flex-row">
-                                        {
-                                            image && (
-                                                <div
-                                                    className="flex w-[100px] h-[100px] mr-2 mb-3 cursor-pointer relative">
-                                                    <img
-                                                        src={image.link}
-                                                        className="flex-1 object-contain border border-gray-300 rounded"
-                                                        onClick={() => {
-                                                            const a = document.createElement("a");
-                                                            a.target = "__blank";
-                                                            a.href = image.link;
-                                                            a.click();
-                                                            a.remove();
-                                                        }} />
-                                                    <FontAwesomeIcon
-                                                        icon={faCircleXmark}
-                                                        className="absolute -top-1 -right-1 cursor-pointer text-sm hover:opacity-70 text-gray-600"
-                                                        onClick={() => {
-                                                            setImage(null)
-                                                        }} />
-                                                </div>
-                                            )
-                                        }
-
-                                        <div
-                                            className="px-2 flex items-center justify-center font-semibold text-sm border border-gray-300 rounded hover:bg-black hover:text-white cursor-pointer h-8"
-                                            onClick={onAddImage}>
-                                            <FontAwesomeIcon
-                                                icon={faPlus}
-                                                className="mr-1" />
-                                            ADD
-                                        </div>
+                                    <div className="font-semibold min-w-[100px]">Color:</div>
+                                    <div className="flex flex-row flex-1">
+                                        <input
+                                            type="color"
+                                            id="chooseColor"
+                                            style={{ width: 0, height: 0 }}
+                                            onChange={e => setColor(e.target.value)} />
+                                        <label
+                                            htmlFor="chooseColor"
+                                            className="flex-1 h-40 border rounded"
+                                            style={{ backgroundColor: color }}>
+                                        </label>
                                     </div>
                                 </div>
                             </div>

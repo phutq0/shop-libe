@@ -8,7 +8,7 @@ import * as EmailValidator from 'email-validator';
 import className from "./className"
 import { setAccount } from "../../share/slices/Account";
 import Utils from "../../share/Utils";
-import Api from "../../api";
+import Api from "api2";
 
 
 const Login = () => {
@@ -29,32 +29,21 @@ const Login = () => {
 
     const handleClickLogin = async () => {
         Utils.showLoading();
-        const response = await Api.auth.login({
+        const response = await Api.account.login({
             email,
             password
         });
         await Utils.wait(1000);
         console.log("response", response);
-        if (response.result == Api.RESULT_CODE.SUCCESS) {
-            localStorage.setItem('account', JSON.stringify({ email, password }));
-            Utils.global.accessToken = response.data.access_token;
-            dispatch(setAccount(response.data.userInfo));
+        if (response.result == "success") {
+            localStorage.setItem('account', JSON.stringify(response.account));
+            dispatch(setAccount(response.account));
             navigate(Utils.global.nextPath ?? "/");
             Utils.hideLoading();
         }
         else {
             Utils.hideLoading();
-            if (response.data.message) {
-                if (response.data.message != "Unauthorized") {
-                    Utils.showToastError("Password is incorrect!")
-                }
-                else {
-                    Utils.showToastError("Can not find this account!");
-                }
-            }
-            else {
-                Utils.showToastError("Can not find this account!");
-            }
+            Utils.showToastError(response.message);
         }
         Utils.hideLoading();
     }
