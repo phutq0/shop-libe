@@ -21,12 +21,13 @@ const Collection = () => {
             page,
             limit: step,
         });
+        console.log(result);
         setData(result);
     }
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [page, step]);
 
     const handleCreate = () => {
         modalCollectionRef.current.show({
@@ -65,8 +66,8 @@ const Collection = () => {
                 isLoading={false}
                 isEmpty={data.collections.length == 0}
                 total={Math.ceil(data.total / step) || 1}
-                page={page}
-                onChangePage={page => setPage(page)}
+                page={page + 1}
+                onChangePage={page => setPage(page - 1)}
                 step={step}
                 onChangeStep={step => setStep(step)}
                 onClickAdd={handleCreate}

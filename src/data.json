@@ -1,0 +1,55 @@
+{
+    "account": {
+        "index": 0,
+        "data": []
+    },
+    "product": {
+        "index": 0,
+        "data": []
+    },
+    "collection": {
+        "index": 6,
+        "data": [
+            {
+                "name": "Collection 1",
+                "description": "Phu test",
+                "color": "#00ffff",
+                "collectionId": 1
+            },
+            {
+                "name": "Collection 2",
+                "description": "This id collection 2",
+                "color": "#616161",
+                "collectionId": 2
+            },
+            {
+                "name": "Collection 3",
+                "description": "",
+                "color": "#66b0ff",
+                "collectionId": 3
+            },
+            {
+                "name": "Collection 4",
+                "description": "",
+                "color": "#00ffff",
+                "collectionId": 4
+            },
+            {
+                "name": "Collection 5",
+                "description": "",
+                "color": "#00ffff",
+                "collectionId": 5
+            },
+            {
+                "name": "Collection 6",
+                "description": "",
+                "color": "#00ffff",
+                "collectionId": 6
+            }
+        ]
+    },
+    "collectionProduct": {
+        "index": 0,
+        "data": []
+    }
+}

@@ -59,7 +59,7 @@ const collection = {
             total: total,
             page: page,
             limit: limit,
-            collections: data.collection.data
+            collections: data.collection.data.slice(page * limit, (page + 1) * limit)
         }
     },
     createCollection: (params) => {
@@ -92,11 +92,31 @@ const product = {
     createProduct: (params) => {
 
     },
-    getProduct: (id) => {
-
+    getProduct: (productId) => {
+        const data = database.load();
+        const product = data.product.data.filter(i => i.productId == productId)[0];
+        if (!product) {
+            return {
+                result: "fail",
+                product: null
+            }
+        }
+        else {
+            return {
+                result: "success",
+                product: product
+            }
+        }
     },
     getListProduct: () => {
 
+    },
+    getListColor: () => {
+        const data = database.load();
+        return {
+            result: "success",
+            colors: data.color.data
+        }
     }
 }
 

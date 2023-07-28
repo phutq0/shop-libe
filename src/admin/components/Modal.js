@@ -50,14 +50,14 @@ const CollectionModal = () => {
     const [color, setColor] = useState("#00ffff");
 
     const onClickRight = () => {
-        if (!name || !description) {
+        if (!name) {
             return;
         }
         const params = {
             name,
             description,
             color,
-            collectionId: config.collection.collectionId
+            collectionId: config?.collection?.collectionId
         }
         config.onConfirm(params);
     }
