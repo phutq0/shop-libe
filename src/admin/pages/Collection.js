@@ -75,7 +75,7 @@ const Collection = () => {
                     <div className="flex flex-row text-sm font-semibold py-2 items-center">
                         <div className="flex-[1] text-center text-gray-400">ID</div>
                         <div className="flex-[2] text-center text-gray-400">NAME</div>
-                        <div className="flex-[2] text-center text-gray-400">NAME</div>
+                        <div className="flex-[2] text-center text-gray-400">DESCRIPTION</div>
                         <div className="flex-[0.5] text-center text-gray-400">Color</div>
                         <div className="flex-[1] text-center text-gray-400">NUMBER PRODUCT</div>
                         <div className="flex-[1] text-center text-gray-400">MANAGE</div>
@@ -86,34 +86,34 @@ const Collection = () => {
                         {data.collections.map((item, index) => (
                             <div
                                 key={item.collectionId ?? index}
-                                className={"flex flex-row text-sm border-t border-b border-gray-100 font-semibold py-1 h-14 items-center hover:bg-gray-100 cursor-pointer " + (index % 2 == 0 ? "bg-gray-50" : "")}>
+                                className={"flex flex-row text-sm border-t border-b border-gray-100 font-semibold py-1 min-h-[72px] hover:bg-gray-100 cursor-pointer " + (index % 2 == 0 ? "bg-gray-50" : "")}>
                                 <div
-                                    className="flex-[1] text-center"
+                                    className="flex-[1] text-center flex items-center justify-center"
                                     onClick={() => handleUpdate(item)}>
                                     {item.collectionId}
                                 </div>
                                 <div
-                                    className="flex-[2] text-center line-clamp-2"
+                                    className="flex-[2] text-center line-clamp-2 flex items-center justify-center"
                                     onClick={() => handleUpdate(item)}>
                                     {item.name}
                                 </div>
                                 <div
-                                    className="flex-[2] text-center line-clamp-2"
+                                    className="flex-[2] flex items-center !line-clamp-3"
                                     onClick={() => handleUpdate(item)}>
                                     {item.description}
                                 </div>
                                 <div
-                                    className="flex-[0.5] h-full flex items-center justify-center p-2"
+                                    className="flex-[0.5] flex items-center justify-center"
                                     onClick={() => handleUpdate(item)}>
-                                    <div className="w-full h-full border rounded" style={{ backgroundColor: item.color }}>
+                                    <div className="w-10 h-10 border rounded" style={{ backgroundColor: item.color }}>
                                     </div>
                                 </div>
                                 <div
-                                    className="flex-[1] text-center"
+                                    className="flex-[1] text-center flex items-center justify-center"
                                     onClick={() => handleUpdate(item)}>
                                     {item.number ?? 10}
                                 </div>
-                                <div className="flex-[1] text-center text-lg text-gray-500">
+                                <div className="flex-[1] text-center text-lg text-gray-500 flex items-center justify-center">
                                     <FontAwesomeIcon
                                         className="hover:text-blue-600"
                                         icon={faGear}

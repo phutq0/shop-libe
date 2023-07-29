@@ -10,6 +10,9 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import LoadingContainer from "../LoadingContainer/LoadingContainer";
+import Chat from "../Chat";
+
+import { Link } from "react-router-dom";
 
 
 const ShopLayout = ({ children, requireLogin }) => {
@@ -45,6 +48,7 @@ const ShopLayout = ({ children, requireLogin }) => {
                     <SearchRight />
                     <CartRight />
                     <ScrollToTop />
+                    <Chat />
                     <UtilComponents />
                 </div>
             </div>

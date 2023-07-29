@@ -4,34 +4,36 @@ import { Table } from "admin/components"
 import { modalProductRef } from "admin/components/Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Api from "shop/api";
 import Utils from "shop/share/Utils";
-import { setPage, setStep, thunkGetProduct } from "shop/share/slices/Product";
 
 const Product = () => {
 
-    const dispatch = useDispatch();
+    const [data, setData] = useState({
+        products: [],
+        total: 0
+    });
 
-    const { isLoading, page, step, total, listProduct } = useSelector(state => state.product);
+    const [page, setPage] = useState(0);
+    const [step, setStep] = useState(5);
+
+    const loadData = () => {
+        const result = Api.collection.getListCollection({
+            page,
+            limit: step,
+        });
+        console.log(result);
+        setData(result);
+    }
 
     useEffect(() => {
-        dispatch(thunkGetProduct({
-            page: page,
-            pageSize: step
-        }));
+
     }, [page, step]);
 
     const handleCreate = async () => {
         modalProductRef.current.show({
             type: 'CREATE',
-            onConfirm: async (formData) => {
-                const response = await Api.product.createProduct(formData);
-                Utils.showToastSuccess("Create product successfully!");
-                modalProductRef.current.hide();
-                dispatch(thunkGetProduct({
-                    page: page,
-                    pageSize: step
-                }));
+            onConfirm: async (params) => {
+
             }
         })
     }
@@ -49,13 +51,13 @@ const Product = () => {
             <Table
                 name={"Collection"}
                 showButtonDelete={true}
-                isLoading={isLoading}
-                isEmpty={listProduct.length == 0}
-                total={Math.ceil(total / step) || 1}
-                page={page}
-                onChangePage={page => dispatch(setPage(page))}
+                isLoading={false}
+                isEmpty={data.products.length == 0}
+                total={Math.ceil(data.total / step) || 1}
+                page={page + 1}
+                onChangePage={page => setPage(page - 1)}
                 step={step}
-                onChangeStep={step => dispatch(setStep(step))}
+                onChangeStep={step => setStep(step)}
                 onClickAdd={handleCreate}
                 header={
                     <div className="flex flex-row text-sm font-semibold py-2 items-center">
@@ -68,7 +70,7 @@ const Product = () => {
                 }
                 body={
                     <div className="flex flex-col">
-                        {listProduct.map((item, index) => (
+                        {data.products.map((item, index) => (
                             <div
                                 key={item.id ?? index}
                                 className={"flex flex-row text-sm border-t border-b border-gray-100 font-semibold py-1 h-14 items-center hover:bg-gray-100 cursor-pointer " + (index % 2 == 0 ? "bg-gray-50" : "")}>

@@ -143,14 +143,14 @@ const CollectionModal = () => {
         </div>
     )
 }
+
 const ProductModal = () => {
 
-    const { listCollection } = useSelector(state => state.collection);
     const dispatch = useDispatch();
 
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState(true);
     const defaultConfig = {
-        title: "Collection",
+        title: "Product",
         buttonLeft: "Cancel",
         buttonRight: "Create",
         onConfirm: () => 1,
@@ -197,12 +197,6 @@ const ProductModal = () => {
     const [number, setNumber] = useState(1);
 
     useEffect(() => {
-        if (listCollection.length == 0) {
-            dispatch(thunkGetCollection({
-                page: 1,
-                pageSize: 99
-            }))
-        }
     }, [])
 
     useEffect(() => {
@@ -263,8 +257,6 @@ const ProductModal = () => {
     useEffect(() => {
         colorRef.current?.focus();
     }, [colors.length]);
-
-
 
     const onAddImage = () => {
         const input = document.createElement("input");
