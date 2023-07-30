@@ -46,6 +46,9 @@ const Utils = {
         accessToken: "",
         nextPath: null
     },
+    parse: (data) => {
+        return JSON.parse(JSON.stringify(data));
+    },
     bind,
     wait: (ms) => new Promise(e => setTimeout(e, ms)),
     showLoading: () => {

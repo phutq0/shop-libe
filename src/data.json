@@ -4,51 +4,92 @@
         "data": []
     },
     "product": {
-        "index": 0,
-        "data": []
-    },
-    "collection": {
-        "index": 6,
+        "index": 1,
         "data": [
             {
-                "name": "Collection 1",
-                "description": "Phu test",
-                "color": "#00ffff",
-                "collectionId": 1
-            },
-            {
-                "name": "Collection 2",
-                "description": "This id collection 2",
-                "color": "#616161",
-                "collectionId": 2
-            },
-            {
-                "name": "Collection 3",
-                "description": "",
-                "color": "#66b0ff",
-                "collectionId": 3
-            },
-            {
-                "name": "Collection 4",
-                "description": "",
-                "color": "#00ffff",
-                "collectionId": 4
-            },
-            {
-                "name": "Collection 5",
-                "description": "",
-                "color": "#00ffff",
-                "collectionId": 5
-            },
-            {
-                "name": "Collection 6",
-                "description": "",
-                "color": "#00ffff",
-                "collectionId": 6
+                "productId": 1,
+                "name": "CÓ cái l",
+                "price": "200000",
+                "images": [
+                    "/upload/images/0ff7c23399ce46c48e34317742f64b4e_Picture5.png",
+                    "/upload/images/1737fe8c12524d3e84694c9f80bf0982_Picture4.png"
+                ],
+                "description": "Heelo 1"
             }
         ]
     },
+    "collection": {
+        "index": 0,
+        "data": []
+    },
     "collectionProduct": {
+        "index": 0,
+        "data": []
+    },
+    "variant": {
+        "index": 3,
+        "data": [
+            {
+                "variantId": 1,
+                "name": "Color"
+            },
+            {
+                "variantId": 2,
+                "name": "Size"
+            },
+            {
+                "variantId": 3,
+                "name": "Material"
+            },
+            {
+                "variantId": 4,
+                "name": "Capacity"
+            }
+        ]
+    },
+    "productVariant": {
+        "index": 2,
+        "data": [
+            {
+                "productVariantId": 1,
+                "variantId": 1,
+                "productId": 1,
+                "name": "Color",
+                "value": "Red"
+            },
+            {
+                "productVariantId": 2,
+                "variantId": 2,
+                "productId": 1,
+                "name": "Size",
+                "value": "S|M|L"
+            }
+        ]
+    },
+    "model": {
+        "index": 3,
+        "data": [
+            {
+                "modelId": 1,
+                "productId": 1,
+                "value": "Red|S|5|0|5",
+                "columns": "Color|Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 2,
+                "productId": 1,
+                "value": "Red|M|1|0|1",
+                "columns": "Color|Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 3,
+                "productId": 1,
+                "value": "Red|L|1|0|1",
+                "columns": "Color|Size|Number|Sold|Remain"
+            }
+        ]
+    },
+    "color": {
         "index": 0,
         "data": []
     }

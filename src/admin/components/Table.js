@@ -8,7 +8,8 @@ import { memo, useState } from "react";
 const Table = ({
     header, body, isLoading, isEmpty, step, page, total,
     name, placeholder, showButtonDelete, onChangeStep, onChangePage,
-    showButtonAdd, onClickAdd
+    showButtonAdd, onClickAdd,
+    search, onChangeSearch
 }) => {
 
     return (
@@ -27,6 +28,8 @@ const Table = ({
                     <input
                         className="w-40 h-8 outline-none border rounded border-gray-300 bg-gray-50 focus-within:bg-white pl-2 text-sm font-semibold text-gray-500"
                         placeholder={placeholder}
+                        value={search}
+                        onChange={onChangeSearch}
                     />
                     <div
                         className="flex items-center justify-center text-sm font-semibold border rounded bg-green-500 cursor-pointer hover:opacity-80 text-white px-6 ml-3"

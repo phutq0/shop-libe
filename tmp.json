@@ -1,0 +1,365 @@
+{
+    "account": {
+        "index": 0,
+        "data": []
+    },
+    "product": {
+        "index": 7,
+        "data": [
+            {
+                "productId": 3,
+                "name": "Multi Blue Shade Long Sleeve Knit Crop Top",
+                "price": 360000,
+                "images": "/upload/images/7ea0507d79314232bb75665c9f656a4c__sleeve_knit_crop_toplibe-white_striped_drawstring_waistband_pants21_(1).webp|/upload/images/70f25e3a3a1f4c7ba4addb27b469903c__sleeve_knit_crop_toplibe-white_striped_drawstring_waistband_pants21_(3).webp|/upload/images/7b829c7a1bc3409389061b8a951aaf65__sleeve_knit_crop_toplibe-white_striped_drawstring_waistband_pants21.webp|/upload/images/6f0f600dfaa94b76bc9f7a1fa35447fc__sleeve_knit_crop_toplibe-white_striped_drawstring_waistband_pants21_(4).webp|/upload/images/e3d6d91a1d0e4eea97069ffa5bd2bae7__sleeve_knit_crop_toplibe-white_striped_drawstring_waistband_pants21_(5).webp",
+                "description": "Áo kiểu dáng suông, ngắn ngang eo, cổ tròn, tay dài rộng. Sản phẩm ra màu nhẹ, cần được giặt riêng với sản phẩm sáng màu khác. \n\nThông số sản phẩm: \nChất liệu: Knit (thun dệt kim)\nMàu sắc: Blue\nSize S: Dài áo 35,5cm ; Dài tay 63cm ; Ngang ngực 48cm\nSize M: Dài áo 36,5cm ; Dài tay 64cm ; Ngang ngực 50cm\nSize L: Dài áo 37,5cm ; Dài tay 65cm ; Ngang ngực 52cm\nThông tin bạn mẫu:\nSố đo: 81-59-89\nChiều cao: 1m65\nCân nặng: 44kg\nMẫu mặc size S\nLưu ý: Sản phẩm trên ảnh và thực tế có sự chênh lệch màu không đáng kể do điều kiện ánh sáng hoặc màn hình thiết bị hiển thị."
+            },
+            {
+                "productId": 4,
+                "name": "Blue Overlap Crop Top",
+                "price": 360000,
+                "images": "/upload/images/e1edec58eccb4b9699557e60df18e7de_libe-blue_overlap_crop_top19.webp|/upload/images/15599bcd88e24f24b390b86ffc1811fa_libe-blue_overlap_crop_top19_(1).webp|/upload/images/a56e996a197f4ca18bb37c12b7252858_libe-blue_overlap_crop_top19_(2).webp",
+                "description": "Áo kiểu dáng suông ngắn ngang eo, cổ chữ V tay liền lửng, xếp nhún đầu vai, có vạt đắp cài khoen gỗ thân trước, Sản phẩm có một nút bấm bên trong giúp cố định vạt áo. Sản phẩm ra màu nhẹ, cần được giặt riêng với sản phẩm sáng màu khác."
+            },
+            {
+                "productId": 5,
+                "name": "Multi-Stripe Drawstring Waistband Pants",
+                "price": 490000,
+                "images": "/upload/images/a9e5f2c2d65647b6806c38226542ac56_libe-multi-stripe_drawstring_waistband_pants18.webp|/upload/images/e5f5567c37ee4f13a06ea8e8739420a9_libe-multi-stripe_drawstring_waistband_pants18_(1).webp|/upload/images/0a40a88af7414711bb93c5b24a2cad75_libe-multi-stripe_drawstring_waistband_pants18_(2).webp",
+                "description": "Quần dài ống rộng, lưng ngang rốn luồn dây thắt nơ, hai túi hai bên. Thiết kế có hoạ tiết sọc màu đen được dệt trực tiếp lên bề mặt vải. Thiết kế có chi tiết mắt cáo được nhuộm trùng màu với vải. "
+            },
+            {
+                "productId": 6,
+                "name": "Blue Ruched Shoulder Detail Top",
+                "price": 350000,
+                "images": "/upload/images/663f5ab1b12347b8a58fc94becbf7802_libe-blue_ruched_shoulder_detail_top17.webp|/upload/images/5dd6dc71d42a49c681ae0459ac7a8134_libe-blue_ruched_shoulder_detail_top17_(1).webp|/upload/images/31bc7b7a753b41e3b75e294bc5b89c38_libe-blue_ruched_shoulder_detail_top17_(2).webp",
+                "description": "Áo kiểu dáng suông, cổ lệch, luồn dây rút cột nơ một bên đầu vai, không tay. "
+            },
+            {
+                "productId": 7,
+                "name": "Mono Check Pleated Camisole",
+                "price": 370000,
+                "images": "/upload/images/a79598cfead54edb9c5d2277e7e2f9cb_libe-mono_check_pleated_camisole16.webp|/upload/images/0ebe8a648e9f4ab7acc1a7bda0cf7607_libe-mono_check_pleated_camisole16_(1).webp|/upload/images/e52bec1e96c448c092e69dc4b7784754_libe-mono_check_pleated_camisole16_(2).webp",
+                "description": "Áo kiểu dáng ôm ngắn trên eo, hai dây mảnh kèm tăng đơ, cổ ngang, xếp nếp xéo tạo kiểu toàn thân. Sản phẩm có dây kéo sườn. Sản phẩm có lớp lót bên trong. "
+            }
+        ]
+    },
+    "collection": {
+        "index": 2,
+        "data": [
+            {
+                "name": "Collection 1",
+                "description": "Collection 1",
+                "color": "#b06363",
+                "collectionId": 1
+            },
+            {
+                "collectionId": 2,
+                "name": "Collection 2",
+                "color": "#9cff66",
+                "description": "Collection 2"
+            }
+        ]
+    },
+    "collectionProduct": {
+        "index": 0,
+        "data": []
+    },
+    "variant": {
+        "index": 3,
+        "data": [
+            {
+                "variantId": 1,
+                "name": "Color"
+            },
+            {
+                "variantId": 2,
+                "name": "Size"
+            },
+            {
+                "variantId": 3,
+                "name": "Material"
+            },
+            {
+                "variantId": 4,
+                "name": "Capacity"
+            }
+        ]
+    },
+    "productVariant": {
+        "index": 10,
+        "data": [
+            {
+                "productVariantId": 1,
+                "variantId": 2,
+                "productId": 1,
+                "name": "Size",
+                "value": "S|A|F|S"
+            },
+            {
+                "productVariantId": 2,
+                "variantId": 2,
+                "productId": 2,
+                "name": "Size",
+                "value": "S|N|M"
+            },
+            {
+                "productVariantId": 3,
+                "variantId": 1,
+                "productId": 3,
+                "name": "Color",
+                "value": "Red|Blue"
+            },
+            {
+                "productVariantId": 4,
+                "variantId": 1,
+                "productId": 4,
+                "name": "Color",
+                "value": "Red"
+            },
+            {
+                "productVariantId": 5,
+                "variantId": 2,
+                "productId": 5,
+                "name": "Size",
+                "value": "S|M|L"
+            },
+            {
+                "productVariantId": 6,
+                "variantId": 1,
+                "productId": 6,
+                "name": "Color",
+                "value": "Blue"
+            },
+            {
+                "productVariantId": 7,
+                "variantId": 3,
+                "productId": 6,
+                "name": "Material",
+                "value": "Cotton"
+            },
+            {
+                "productVariantId": 8,
+                "variantId": 2,
+                "productId": 6,
+                "name": "Size",
+                "value": "S|M|L"
+            },
+            {
+                "productVariantId": 9,
+                "variantId": 3,
+                "productId": 7,
+                "name": "Material",
+                "value": "Khaki"
+            },
+            {
+                "productVariantId": 10,
+                "variantId": 2,
+                "productId": 7,
+                "name": "Size",
+                "value": "S|M|L"
+            }
+        ]
+    },
+    "model": {
+        "index": 22,
+        "data": [
+            {
+                "modelId": 1,
+                "productId": 1,
+                "name": "S",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 2,
+                "productId": 1,
+                "name": "A",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 3,
+                "productId": 1,
+                "name": "F",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 4,
+                "productId": 1,
+                "name": "S",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 5,
+                "name": "S",
+                "number": 2,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 6,
+                "name": "N",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 7,
+                "name": "M",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 8,
+                "name": "Red",
+                "number": 3,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 9,
+                "name": "Blue",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 10,
+                "name": "Red",
+                "productId": 3,
+                "number": 3,
+                "sold": 0,
+                "remain": 3,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 11,
+                "name": "Blue",
+                "productId": 3,
+                "number": 5,
+                "sold": 2,
+                "remain": 3,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 12,
+                "productId": 3,
+                "name": "Yellow",
+                "number": 3,
+                "sold": 0,
+                "remain": 3,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 13,
+                "name": "Red",
+                "productId": 4,
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Number|Sold|Remain"
+            },
+            {
+                "modelId": 14,
+                "name": "S",
+                "productId": 5,
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 15,
+                "name": "M",
+                "productId": 5,
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 16,
+                "name": "L",
+                "productId": 5,
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Number|Sold|Remain"
+            },
+            {
+                "modelId": 17,
+                "productId": 6,
+                "name": "Blue|S|Cotton",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Size|Material|Number|Sold|Remain"
+            },
+            {
+                "modelId": 18,
+                "productId": 6,
+                "name": "Blue|M|Cotton",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Size|Material|Number|Sold|Remain"
+            },
+            {
+                "modelId": 19,
+                "productId": 6,
+                "name": "Blue|L|Cotton",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Color|Size|Material|Number|Sold|Remain"
+            },
+            {
+                "modelId": 20,
+                "productId": 7,
+                "name": "S|Khaki",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Material|Number|Sold|Remain"
+            },
+            {
+                "modelId": 21,
+                "productId": 7,
+                "name": "M|Khaki",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Material|Number|Sold|Remain"
+            },
+            {
+                "modelId": 22,
+                "productId": 7,
+                "name": "L|Khaki",
+                "number": 1,
+                "sold": 0,
+                "remain": 1,
+                "columns": "Size|Material|Number|Sold|Remain"
+            }
+        ]
+    },
+    "color": {
+        "index": 0,
+        "data": []
+    }
+}

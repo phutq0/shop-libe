@@ -38,7 +38,7 @@ app.post("/api/v1/upload", uploadFile, async (req, res) => {
 
     return res.status(200).json({
         result: "success",
-        links: files.map(i => i.link)
+        links: files ? files.map(i => i.link) : []
     });
 });
 

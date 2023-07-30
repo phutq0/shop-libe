@@ -1,9 +1,11 @@
-import { faCircleXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faPlus, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Api from "api2";
 import _ from "lodash";
-import { createRef, useEffect, useRef, useState } from "react"
+import { createRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import Api from "shop/api";
+import DropDown from "shop/components/DropDown/DropDown";
+import Utils from "shop/share/Utils";
 import { thunkGetCollection } from "shop/share/slices/Collection";
 
 const modalCollectionRef = createRef();
@@ -34,6 +36,24 @@ const CollectionModal = () => {
     const [config, setConfig] = useState({ ...defaultConfig });
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [listProduct, setListProduct] = useState([]);
+    const [query, setQuery] = useState("");
+    const [products, setProducts] = useState([]);
+    const productIds = listProduct.map(item => item.productId);
+
+    const loadProduct = () => {
+        const result = Api.product.getListProduct({
+            page: 0,
+            limit: 99,
+            query: query
+        });
+        console.log(result);
+        setProducts(result.products);
+    }
+
+    useEffect(() => {
+        loadProduct();
+    }, [query])
 
     useEffect(() => {
         modalCollectionRef.current = {
@@ -59,6 +79,10 @@ const CollectionModal = () => {
             color,
             collectionId: config?.collection?.collectionId
         }
+        if (config.type == "UPDATE") {
+            params.listProduct = listProduct;
+            params.collectionId = config?.collection?.collectionId
+        }
         config.onConfirm(params);
     }
 
@@ -68,14 +92,20 @@ const CollectionModal = () => {
                 setName(config.collection.name ?? "");
                 setDescription(config.collection.description ?? "");
                 setColor(config.collection.color ?? "#00ffff");
+                setListProduct(config.collection.products);
+                setQuery("");
             }
             else {
                 setName("");
                 setDescription("");
                 setColor("#00ffff");
+                setListProduct([]);
+                setQuery("");
             }
         }
-    }, [show])
+    }, [show]);
+
+    console.log(listProduct);
 
     return (
         <div>
@@ -87,7 +117,7 @@ const CollectionModal = () => {
                         <div className="w-full h-full bg-white border rounded shadow flex flex-col md:max-w-4xl z-[1]">
                             <div className="text-center font-semibold py-2 border-b">{config.title}</div>
                             <div className="flex-1 px-3 py-2 overflow-y-scroll">
-                                <div className="flex flex-row text-sm items-center m-3">
+                                <div className="flex flex-row text-sm items-center mb-3">
                                     <div className="font-semibold min-w-[100px]">Name:</div>
                                     <div className="flex-1 flex h-10">
                                         <input
@@ -97,7 +127,7 @@ const CollectionModal = () => {
                                             onChange={e => setName(e.target.value)} />
                                     </div>
                                 </div>
-                                <div className="flex flex-row text-sm m-3">
+                                <div className="flex flex-row text-sm mb-3">
                                     <div className="font-semibold min-w-[100px]">Description:</div>
                                     <textarea
                                         className="flex-1 h-60 border bg-gray-100 rounded p-2 focus-within:border-gray-300 focus-within:bg-white resize-none outline-none"
@@ -105,7 +135,7 @@ const CollectionModal = () => {
                                         value={description}
                                         onChange={e => setDescription(e.target.value)} />
                                 </div>
-                                <div className="flex flex-row text-sm m-3">
+                                <div className="flex flex-row text-sm mb-3">
                                     <div className="font-semibold min-w-[100px]">Color:</div>
                                     <div className="flex flex-row flex-1">
                                         <input
@@ -115,9 +145,62 @@ const CollectionModal = () => {
                                             onChange={e => setColor(e.target.value)} />
                                         <label
                                             htmlFor="chooseColor"
-                                            className="flex-1 h-40 border rounded"
+                                            className="w-32 h-20 border rounded cursor-pointer"
                                             style={{ backgroundColor: color }}>
                                         </label>
+                                    </div>
+                                </div>
+                                <div className="flex flex-row text-sm mb-3">
+                                    <div className="font-semibold min-w-[100px]">Product:</div>
+                                    <div className="flex flex-col flex-1 ">
+                                        <div className="flex flex-row flex-wrap">
+                                            {listProduct.map((item, index) => (
+                                                <div
+                                                    key={item.productId ?? index}
+                                                    className="w-1/2 h-20 flex flex-row items-center cursor-pointer pb-2 mb-2 border-b pr-2">
+                                                    <img
+                                                        className="h-20 w-20 object-contain border rounded"
+                                                        src={"http://localhost:4000" + item.images[0]}
+                                                        alt={item.name} />
+                                                    <div className="flex-1 ml-2 pr-2">{item.name}</div>
+                                                    <FontAwesomeIcon
+                                                        icon={faXmark}
+                                                        className="text-xl hover:opacity-50"
+                                                        onClick={() => {
+                                                            _.remove(listProduct, i => i.productId == item.productId);
+                                                            setListProduct([...listProduct]);
+                                                        }} />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                className="w-[480px] h-9 rounded border outline-none border-gray-200 bg-gray-100 focus-within:border-gray-400 focus-within:bg-white px-2"
+                                                placeholder="Search"
+                                                value={query}
+                                                onChange={e => setQuery(e.target.value)} />
+                                            <div className="small-scrollbar flex flex-col mt-1 py-1 w-[480px] h-[420px] overflow-y-scroll border rounded shadow group-[input]:focus-within:flex">
+                                                {products.filter(item => !productIds.includes(item.productId)).map((item, index) => (
+                                                    <div
+                                                        key={item.productId ?? index}
+                                                        className="flex flex-row items-center pl-2 hover:bg-gray-100 py-1 cursor-pointer group border-b">
+                                                        <img
+                                                            className="h-20 w-20 object-contain border rounded"
+                                                            src={"http://localhost:4000" + item.images[0]}
+                                                            alt={item.name} />
+                                                        <div className="flex-1 py-1 pl-2 line-clamp-1 group-hover:font-semibold">{item.name}</div>
+                                                        <FontAwesomeIcon
+                                                            icon={faPlus}
+                                                            className="px-3 py-2 border rounded hover:bg-black hover:text-white"
+                                                            onClick={() => {
+                                                                listProduct.push(item);
+                                                                setListProduct([...listProduct]);
+                                                            }} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +231,7 @@ const ProductModal = () => {
 
     const dispatch = useDispatch();
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
     const defaultConfig = {
         title: "Product",
         buttonLeft: "Cancel",
@@ -177,91 +260,15 @@ const ProductModal = () => {
     }, []);
 
     const [description, setDescription] = useState("");
-
-    const [sizes, setSizes] = useState([]);
-    const sizeRef = useRef();
-
-    const [materials, setMaterials] = useState([]);
-    const materialRef = useRef();
-
-    const [colors, setColors] = useState([]);
-    const colorRef = useRef();
-
-    const [collections, setCollections] = useState([
-        { id: 1, name: "hello" }
-    ]);
-
     const [images, setImages] = useState([]);
     const [name, setName] = useState("");
     const [price, setPrice] = useState(0);
-    const [number, setNumber] = useState(1);
-
-    useEffect(() => {
-    }, [])
-
-    useEffect(() => {
-        if (show) {
-            if (config.type == "UPDATE") {
-                console.log(config.product);
-                setName(config.product?.name ?? "");
-                setPrice(config.product?.price ?? 0);
-                setNumber(config.product?.quantity ?? 1);
-                const data = JSON.parse(config.product?.detail ?? "{}");
-                setSizes(data.size?.split("|").map(i => ({ id: Math.random().toString(), value: i })) ?? []);
-                setMaterials(data.material?.split("|").map(i => ({ id: Math.random().toString(), value: i })) ?? []);
-                setColors(data.color?.split("|").map(i => ({ id: Math.random().toString(), value: i })) ?? []);
-                setDescription(data.description ?? "");
-                const images = config.product?.imageProduct ?? [];
-                const _images = images.map(item => ({
-                    id: item.id ?? Math.random().toString(),
-                    link: item.imageLink
-                }));
-                setImages([..._images]);
-            }
-            else {
-                setName("");
-                setPrice(0);
-                setNumber(1);
-                setSizes([]);
-                setMaterials([]);
-                setColors([]);
-                setDescription("");
-                setImages([]);
-            }
-        }
-    }, [show])
-
-    if (materials.length > 0) {
-        materials.forEach(item => { item.ref = undefined })
-        materials.at(-1).ref = materialRef;
-    }
-
-    if (sizes.length > 0) {
-        sizes.forEach(item => { item.ref = undefined })
-        sizes.at(-1).ref = sizeRef;
-    }
-
-    if (colors.length > 0) {
-        colors.forEach(item => { item.ref = undefined })
-        colors.at(-1).ref = colorRef;
-    }
-
-    useEffect(() => {
-        materialRef.current?.focus();
-    }, [materials.length]);
-
-    useEffect(() => {
-        sizeRef.current?.focus();
-    }, [sizes.length]);
-
-    useEffect(() => {
-        colorRef.current?.focus();
-    }, [colors.length]);
+    const [removeImages, setRemoveImages] = useState([])
 
     const onAddImage = () => {
         const input = document.createElement("input");
         input.type = "file";
-        input.accept = "image/png";
+        input.accept = "image/*";
         input.multiple = "multiple"
         input.onchange = e => {
             const arr = e.target.files;
@@ -282,29 +289,151 @@ const ProductModal = () => {
     }
 
     const onClickRight = () => {
-        if (!name || price == 0 || sizes.length == 0 || materials.length == 0 || colors.length == 0) {
-            return;
-        }
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("price", price);
-        formData.append("quantity", number);
-        const detail = {
-            size: sizes.map(i => i.value).join("|"),
-            material: materials.map(i => i.value).join("|"),
-            color: colors.map(i => i.value).join("|"),
+        const params = {
+            name: name,
+            price: Number(price),
+            variantList: variantList,
+            options: options,
+            images: images,
             description: description
         }
-        formData.append("detail", JSON.stringify(detail));
-        formData.append("size", sizes.map(item => item.value).join("|"));
-        formData.append("color", colors.map(item => item.value).join("|"));
-        for (const i of images) {
-            if (i.file) {
-                formData.append("files", i.file);
+        if (config.type == "UPDATE") {
+            params.removeImages = removeImages;
+            params.productId = config.product.productId;
+        }
+        config.onConfirm(params);
+    }
+
+    const [variants, setVariants] = useState([]);
+    const [variantList, setVariantList] = useState([]);
+
+    const loadVariant = () => {
+        const result = Api.product.getListVariant();
+        setVariants(JSON.parse(JSON.stringify(result.variants)))
+    }
+
+    useEffect(() => {
+        loadVariant()
+    }, []);
+
+    const existedVariant = variantList.map(i => i.name);
+
+    const [options, setOptions] = useState({
+        columns: "",
+        data: []
+    });
+
+    const getOption = () => {
+        const result = {
+            columns: [],
+            data: []
+        };
+        const obj = {};
+        for (const i of variants) {
+            obj[i.name.toLowerCase()] = i.variantId
+        }
+        const _variantList = Utils.parse(variantList.map(item => ({ ...item, index: obj[item.name.toLowerCase()] })));
+        _variantList.sort((a, b) => a.index - b.index)
+        for (const i of _variantList) {
+            result.columns.push(i.name);
+        }
+        result.columns.push("Number");
+        result.columns.push("Sold");
+        result.columns.push("Remain");
+        result.columns = result.columns.join("|");
+        const tempData = [];
+        for (const item of _variantList) {
+            if (tempData.length === 0) {
+                for (const value of item.data) {
+                    tempData.push([value.value]);
+                }
+            } else {
+                const newData = [];
+                for (const newItem of tempData) {
+                    for (const value of item.data) {
+                        newData.push([...newItem, value.value]);
+                    }
+                }
+                tempData.length = 0;
+                tempData.push(...newData);
             }
         }
-        config.onConfirm(formData);
+        result.data = tempData;
+        result.data = result.data.map(item => ({
+            name: item.join("|"),
+            id: Math.random().toString(),
+            number: 1,
+            sold: 0,
+            remain: 1
+        }));
+        for (const i of result.data) {
+            for (const j of options.data) {
+                if (i.name == j.name) {
+                    i.modelId = j.modelId;
+                    i.number = j.number;
+                    i.sold = j.sold;
+                    i.remain = j.remain;
+                }
+            }
+        }
+        return result;
     }
+
+    useEffect(() => {
+        const result = getOption();
+        setOptions(result);
+    }, [variantList]);
+
+    useEffect(() => {
+        if (show) {
+            if (config.type == "UPDATE") {
+                const product = config.product;
+                const variants = product.variants.map(item => ({
+                    ...item,
+                    id: Math.random().toString(),
+                    data: item.data.map(item => ({
+                        id: Math.random().toString(),
+                        value: item
+                    }))
+                }));
+                setName(product.name);
+                setPrice(product.price);
+                setVariantList(variants);
+                setImages(product.images.map(item => ({
+                    id: Math.random().toString(),
+                    link: "http://localhost:4000" + item
+                })));
+                setDescription(product.description)
+            }
+            else {
+                setName("");
+                setPrice(0);
+                setVariantList([]);
+                setImages([]);
+                setDescription("")
+            }
+        }
+        setRemoveImages([]);
+    }, [show]);
+
+    useLayoutEffect(() => {
+        if (show) {
+            const product = config.product;
+            if (config.type == "UPDATE") {
+                setOptions({
+                    columns: product.models.columns,
+                    data: product.models.data
+                });
+            }
+            else {
+                setOptions({
+                    columns: "",
+                    data: []
+                });
+            }
+        }
+    }, [show]);
+
 
     return (
         <div>
@@ -316,7 +445,7 @@ const ProductModal = () => {
                         <div className="w-full h-full bg-white border rounded shadow flex flex-col md:max-w-4xl z-[1]">
                             <div className="text-center font-semibold py-2 border-b">{config.title}</div>
                             <div className="flex-1 px-3 py-2 overflow-y-scroll">
-                                <div className="flex flex-row text-sm items-center m-3">
+                                <div className="flex flex-row text-sm items-center mb-3">
                                     <div className="font-semibold min-w-[100px]">Name:</div>
                                     <div className="flex-1 flex h-10">
                                         <input
@@ -326,63 +455,7 @@ const ProductModal = () => {
                                             onChange={e => setName(e.target.value)} />
                                     </div>
                                 </div>
-                                {
-                                    (config.type == "UPDATE" || config.type == "ADD_COLLECTION") && (
-                                        <div className="flex flex-row text-sm items-center m-3">
-                                            <div className="font-semibold min-w-[100px]">Collection:</div>
-                                            <div className="flex-1 flex h-10 flex-row items-center flex-wrap">
-                                                {collections.map(_item => (
-                                                    <div
-                                                        key={_item.id}
-                                                        className="relative w-32 h-8 flex">
-                                                        <select
-                                                            className="flex-1 border border-gray-300 rounded pl-2 mr-2"
-                                                            value={JSON.stringify(_item)}
-                                                            onChange={e => {
-                                                                const tmp = JSON.parse(e.target.value);
-                                                                _item.id = tmp.id;
-                                                                _item.name = tmp.name;
-                                                                setCollections([...collections])
-                                                            }}>
-                                                            {[{ id: 0, name: "Select" }, ...listCollection].map(item => (
-                                                                <option
-                                                                    key={item.id}
-                                                                    value={JSON.stringify({
-                                                                        id: item.id,
-                                                                        name: item.name
-                                                                    })}>
-                                                                    {item.name}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                        <FontAwesomeIcon
-                                                            icon={faCircleXmark}
-                                                            className="absolute -top-1 right-[2px] cursor-pointer text-sm hover:opacity-70 text-gray-600 z-[1]"
-                                                            onClick={() => {
-                                                                _.remove(collections, i => i.id == _item.id);
-                                                                setCollections([...collections])
-                                                            }} />
-                                                    </div>
-                                                ))}
-                                                <div
-                                                    className="px-2 flex items-center justify-center font-semibold text-sm border border-gray-300 rounded hover:bg-black hover:text-white cursor-pointer h-8"
-                                                    onClick={() => {
-                                                        collections.push({
-                                                            id: Math.random().toString(),
-                                                            name: "Select"
-                                                        });
-                                                        setCollections([...collections]);
-                                                    }}>
-                                                    <FontAwesomeIcon
-                                                        icon={faPlus}
-                                                        className="mr-1" />
-                                                    ADD
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-                                <div className="flex flex-row text-sm items-center m-3">
+                                <div className="flex flex-row text-sm items-center mb-3">
                                     <div className="font-semibold min-w-[100px]">Price:</div>
                                     <div className="flex-1 flex h-10">
                                         <input
@@ -393,162 +466,189 @@ const ProductModal = () => {
                                             onChange={e => setPrice(e.target.value)} />
                                     </div>
                                 </div>
-                                <div className="flex flex-row text-sm items-center m-3">
-                                    <div className="font-semibold min-w-[100px]">Number:</div>
-                                    <div className="flex-1 flex h-10">
-                                        <input
-                                            className="flex-1 outline-none border rounded bg-gray-100 focus-within:border-gray-300 focus-within:bg-white px-2"
-                                            placeholder="Number"
-                                            value={number}
-                                            type="number"
-                                            onChange={e => setNumber(e.target.value)} />
-                                    </div>
-                                </div>
-                                <div className="flex flex-row text-sm items-center m-3">
-                                    <div className="font-semibold min-w-[100px]">Size:</div>
-                                    <div className="flex-1 flex h-10 flex-row items-center">
-                                        {sizes.map((item) => (
+                                <div className="flex flex-row text-sm mb-3">
+                                    <div className="font-semibold min-w-[100px]">Variant:</div>
+                                    <div className="flex-1 flex flex-col">
+                                        <DropDown
+                                            className="w-fit"
+                                            component={
+                                                <div className="font-semibold text-sm px-3 py-1 border rounded border-gray-200 cursor-pointer hover:bg-black hover:text-white">
+                                                    + ADD
+                                                </div>
+                                            }
+                                            render={
+                                                <div className="w-20 flex flex-col bg-white border rounded shadow-md py-1">
+                                                    {variants.filter(i => !existedVariant.includes(i.name)).map((item, index) => (
+                                                        <div
+                                                            key={item.variantId ?? index}
+                                                            className="hover:bg-gray-200 px-2 cursor-pointer py-1 hover:font-semibold text-sm"
+                                                            onClick={() => {
+                                                                variantList.push({
+                                                                    ...item,
+                                                                    id: Math.random().toString(),
+                                                                    data: [{
+                                                                        id: Math.random().toString(),
+                                                                        value: ""
+                                                                    }]
+                                                                });
+                                                                setVariantList([...variantList]);
+                                                            }}>
+                                                            {item.name}
+                                                        </div>
+
+                                                    ))}
+                                                </div>
+                                            } />
+                                        {variantList.map((variant, index) => (
                                             <div
-                                                key={item.id}
-                                                className="w-12 h-8 flex mr-2 relative">
-                                                <input
-                                                    value={item.value}
-                                                    id={item.id}
-                                                    ref={item.ref ?? undefined}
-                                                    className="flex-1 overflow-hidden outline-none border-[2px] rounded border-gray-300 focus-within:bg-white focus-within:border-gray-600 text-center text-sm font-semibold"
-                                                    onChange={e => {
-                                                        item.value = e.target.value;
-                                                        setSizes([...sizes])
-                                                    }}
-                                                />
+                                                key={variant.id ?? index}
+                                                className="flex flex-row mt-3 relative">
+                                                <div className="font-semibold h-10 w-16">
+                                                    {variant.name}:
+                                                </div>
+                                                <div className="flex-1 flex flex-row ml-2 flex-wrap pr-6">
+                                                    {variant.data.map((item_, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="h-8 w-20 flex mr-2 mb-2 relative">
+                                                            <input
+                                                                value={item_.value}
+                                                                autoFocus
+                                                                className="overflow-hidden outline-none border-[2px] rounded border-gray-300 focus-within:bg-white focus-within:border-gray-600 text-sm text-center font-semibold w-fit"
+                                                                onChange={e => {
+                                                                    item_.value = e.target.value;
+                                                                    setVariantList(Utils.parse(variantList));
+                                                                }}
+                                                            />
+                                                            <FontAwesomeIcon
+                                                                icon={faCircleXmark}
+                                                                className="absolute -top-[6px] -right-[6px] cursor-pointer text-sm hover:opacity-70 text-gray-600 bg-white border rounded-full"
+                                                                onClick={() => {
+                                                                    _.remove(variant.data, i => i.id == item_.id);
+                                                                    if (variant.data.length == 0) {
+                                                                        _.remove(variantList, i => i.id == variant.id);
+                                                                    }
+                                                                    setVariantList(Utils.parse(variantList));
+                                                                }} />
+                                                        </div>
+                                                    ))}
+                                                    <div
+                                                        className="font-semibold text-sm px-2 py-1 border rounded border-gray-200 cursor-pointer hover:bg-black hover:text-white w-fit h-fit"
+                                                        onClick={() => {
+                                                            variant.data.push({
+                                                                id: Math.random().toString(),
+                                                                value: ""
+                                                            });
+                                                            setVariantList(Utils.parse(variantList));
+                                                        }}>
+                                                        + ADD
+                                                    </div>
+                                                </div>
                                                 <FontAwesomeIcon
-                                                    icon={faCircleXmark}
-                                                    className="absolute -top-1 -right-1 cursor-pointer text-sm hover:opacity-70 text-gray-600"
+                                                    icon={faXmark}
+                                                    className="cursor-pointer text-xl text-gray-600 bg-white mr-2 z-[1]"
                                                     onClick={() => {
-                                                        _.remove(sizes, i => i.id == item.id);
-                                                        setSizes([...sizes]);
+                                                        _.remove(variantList, i => i.id == variant.id);
+                                                        setVariantList(Utils.parse(variantList));
                                                     }} />
                                             </div>
                                         ))}
-                                        <div
-                                            className="px-2 flex items-center justify-center font-semibold text-sm border border-gray-300 rounded hover:bg-black hover:text-white cursor-pointer h-8"
-                                            onClick={() => {
-                                                const newSize = {
-                                                    id: Math.random().toString(),
-                                                    value: "",
-                                                }
-                                                sizes.push(newSize);
-                                                setSizes([...sizes]);
-                                            }}>
-                                            <FontAwesomeIcon
-                                                icon={faPlus}
-                                                className="mr-1" />
-                                            ADD
-                                        </div>
                                     </div>
+
                                 </div>
-                                <div className="flex flex-row text-sm items-center m-3">
-                                    <div className="font-semibold min-w-[100px]">Material:</div>
-                                    <div className="flex-1 flex h-10 flex-row items-center">
-                                        {materials.map((item) => (
-                                            <div
-                                                key={item.id}
-                                                className="w-20 h-8 flex mr-2 relative">
-                                                <input
-                                                    value={item.value}
-                                                    id={item.id}
-                                                    ref={item.ref ?? undefined}
-                                                    className="flex-1 overflow-hidden outline-none border-[2px] rounded border-gray-300 focus-within:bg-white focus-within:border-gray-600 text-center text-sm font-semibold"
-                                                    onChange={e => {
-                                                        item.value = e.target.value;
-                                                        setMaterials([...materials])
-                                                    }}
-                                                />
-                                                <FontAwesomeIcon
-                                                    icon={faCircleXmark}
-                                                    className="absolute -top-1 -right-1 cursor-pointer text-sm hover:opacity-70 text-gray-600"
-                                                    onClick={() => {
-                                                        _.remove(materials, i => i.id == item.id);
-                                                        setMaterials([...materials]);
-                                                    }} />
+                                {options.data.length > 0 && (
+                                    <div className="flex flex-row text-sm mb-3">
+                                        <div className="font-semibold min-w-[100px]">Options:</div>
+                                        <div className="flex flex-col border p-1 w-fit rounded shadow">
+                                            <div className="flex flex-row">
+                                                {options.columns?.split("|").map((column, index) => (
+                                                    <div key={index} className="w-28 h-8 text-center flex items-center justify-center font-semibold border-b">{column}</div>
+                                                ))}
+                                                <div className="flex-1 px-3 h-8 text-center flex items-center justify-center font-semibold border-b">Action</div>
                                             </div>
-                                        ))}
-                                        <div
-                                            className="px-2 flex items-center justify-center font-semibold text-sm border border-gray-300 rounded hover:bg-black hover:text-white cursor-pointer h-8"
-                                            onClick={() => {
-                                                const newMaterial = {
-                                                    id: Math.random().toString(),
-                                                    value: "",
-                                                }
-                                                materials.push(newMaterial);
-                                                setMaterials([...materials]);
-                                            }}>
-                                            <FontAwesomeIcon
-                                                icon={faPlus}
-                                                className="mr-1" />
-                                            ADD
+                                            {options.data.map((item, index) => (
+                                                <div
+                                                    className={"flex flex-row border-b" + (index % 2 == 1 ? " bg-gray-100" : "")}
+                                                    key={index}>
+                                                    {item.name.split("|").map((column, index_) => (
+                                                        <div
+                                                            key={index_}
+                                                            className="w-28 h-8 text-center flex items-center justify-center">
+                                                            {column}
+                                                        </div>
+                                                    ))}
+                                                    <div className="w-28 h-8 flex justify-center font-semibold">
+                                                        <input
+                                                            className="w-24 h-8 text-center outline-none bg-transparent focus-within:border-2 focus-within:border-gray-500 rounded"
+                                                            value={item.number}
+                                                            type="number"
+                                                            onChange={e => {
+                                                                item.number = Number(e.target.value);
+                                                                setOptions(Utils.parse(options));
+                                                            }} />
+                                                    </div>
+                                                    <div className="w-28 h-8 flex justify-center font-semibold">
+                                                        <input
+                                                            className="w-24 h-8 text-center outline-none bg-transparent focus-within:border-2 focus-within:border-gray-500 rounded"
+                                                            value={item.sold}
+                                                            type="number"
+                                                            onChange={e => {
+                                                                item.sold = Number(e.target.value);
+                                                                setOptions(Utils.parse(options));
+                                                            }} />
+                                                    </div>
+                                                    <div className="w-28 h-8 flex justify-center font-semibold">
+                                                        <input
+                                                            className="w-24 h-8 text-center outline-none bg-transparent focus-within:border-2 focus-within:border-gray-500 rounded"
+                                                            value={item.remain}
+                                                            type="number"
+                                                            onChange={e => {
+                                                                item.remain = Number(e.target.value);
+                                                                setOptions(Utils.parse(options));
+                                                            }} />
+                                                    </div>
+                                                    <div className="flex-1 px-3 h-8 text-center flex items-center justify-center font-semibold border-b">
+                                                        <FontAwesomeIcon
+                                                            icon={faTrashCan}
+                                                            className="text-red-500 cursor-pointer hover:opacity-70"
+                                                            onClick={() => {
+                                                                _.remove(options.data, i => i == item);
+                                                                setOptions(Utils.parse(options));
+                                                            }} />
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex flex-row text-sm items-center m-3">
-                                    <div className="font-semibold min-w-[100px]">Color:</div>
-                                    <div className="flex-1 flex h-10 flex-row items-center">
-                                        {colors.map((item) => (
-                                            <div
-                                                key={item.id}
-                                                className="w-20 h-8 flex mr-2 relative">
-                                                <input
-                                                    value={item.value}
-                                                    id={item.id}
-                                                    ref={item.ref ?? undefined}
-                                                    className="flex-1 overflow-hidden outline-none border-[2px] rounded border-gray-300 focus-within:bg-white focus-within:border-gray-600 text-center text-sm font-semibold"
-                                                    onChange={e => {
-                                                        item.value = e.target.value;
-                                                        setColors([...colors])
-                                                    }}
-                                                />
-                                                <FontAwesomeIcon
-                                                    icon={faCircleXmark}
-                                                    className="absolute -top-1 -right-1 cursor-pointer text-sm hover:opacity-70 text-gray-600"
-                                                    onClick={() => {
-                                                        _.remove(colors, i => i.id == item.id);
-                                                        setColors([...colors]);
-                                                    }} />
-                                            </div>
-                                        ))}
-                                        <div
-                                            className="px-2 flex items-center justify-center font-semibold text-sm border border-gray-300 rounded hover:bg-black hover:text-white cursor-pointer h-8"
-                                            onClick={() => {
-                                                colors.push({
-                                                    id: Math.random().toString(),
-                                                    value: "",
-                                                });
-                                                setColors([...colors]);
-                                            }}>
-                                            <FontAwesomeIcon
-                                                icon={faPlus}
-                                                className="mr-1" />
-                                            ADD
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex flex-row text-sm m-3">
+                                )}
+                                <div className="flex flex-row text-sm mb-3">
                                     <div className="font-semibold min-w-[100px]">Image:</div>
                                     <div className="flex flex-row flex-1 flex-wrap">
                                         {images.map(item => (
                                             <div
                                                 key={item.id}
-                                                className="flex w-[100px] h-[100px] mr-2 mb-3 cursor-pointer"
-                                                onClick={() => {
-                                                    const a = document.createElement("a");
-                                                    a.target = "__blank";
-                                                    a.href = item.link;
-                                                    a.click();
-                                                    a.remove();
-                                                }}>
+                                                className="flex w-[100px] h-[100px] mr-2 mb-3 cursor-pointer relative"
+                                            >
                                                 <img
                                                     src={item.link}
-                                                    className="flex-1 object-contain border border-gray-300 rounded" />
+                                                    className="flex-1 object-contain border border-gray-300 rounded"
+                                                    onClick={() => {
+                                                        const a = document.createElement("a");
+                                                        a.target = "__blank";
+                                                        a.href = item.link;
+                                                        a.click();
+                                                        a.remove();
+                                                    }} />
+                                                <FontAwesomeIcon
+                                                    icon={faCircleXmark}
+                                                    className="absolute -top-[6px] -right-[6px] cursor-pointer text-sm hover:opacity-70 text-gray-600 bg-white border rounded-full"
+                                                    onClick={() => {
+                                                        if (!item.file) {
+                                                            removeImages.push(item.link);
+                                                        }
+                                                        _.remove(images, i => i.id == item.id);
+                                                        setImages(Utils.parse(images));
+                                                    }} />
 
                                             </div>
                                         ))}
@@ -562,7 +662,7 @@ const ProductModal = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-row text-sm m-3">
+                                <div className="flex flex-row text-sm mb-3">
                                     <div className="font-semibold min-w-[100px]">Description:</div>
                                     <textarea
                                         className="flex-1 h-60 border bg-gray-100 rounded p-2 focus-within:border-gray-300 focus-within:bg-white resize-none outline-none"

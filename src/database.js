@@ -1,6 +1,11 @@
 class Product {
-    productId
-
+    account
+    product
+    collection
+    collectionProduct
+    variant
+    productVariant
+    model
 }
 
 /**
