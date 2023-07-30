@@ -101,7 +101,7 @@ const collection = {
         const oldProduct = data.collectionProduct.data.filter(i => i.collectionId == params.collectionId).map(item => item.productId);
         const newProduct = params.listProduct.filter(i => !oldProduct.includes(i.productId));
         const listProductIds = params.listProduct.map(item => item.productId);
-        _.remove(data.collectionProduct.data, i => !listProductIds.includes(i.productId));
+        _.remove(data.collectionProduct.data, i => (!listProductIds.includes(i.productId) && i.collectionId == params.collectionId));
         for (const i of newProduct) {
             const collectionProductId = data.collectionProduct.index + 1;
             data.collectionProduct.data.push({

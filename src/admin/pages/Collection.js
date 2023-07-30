@@ -50,7 +50,6 @@ const Collection = () => {
             type: "UPDATE",
             buttonRight: "Save",
             onConfirm: async (params) => {
-                console.log(params);
                 const result = Api.collection.updateCollection(params);
                 Utils.showToastSuccess("Update successfully!");
                 modalCollectionRef.current.hide();

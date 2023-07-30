@@ -48,21 +48,37 @@
         "data": [
             {
                 "name": "Collection 1",
-                "description": "Collection 1",
                 "color": "#b06363",
+                "description": "Collection 1",
                 "collectionId": 1
             },
             {
-                "collectionId": 2,
                 "name": "Collection 2",
                 "color": "#9cff66",
-                "description": "Collection 2"
+                "description": "Collection 2",
+                "collectionId": 2
             }
         ]
     },
     "collectionProduct": {
-        "index": 0,
-        "data": []
+        "index": 7,
+        "data": [
+            {
+                "collectionProductId": 2,
+                "collectionId": 1,
+                "productId": 4
+            },
+            {
+                "collectionProductId": 5,
+                "collectionId": 2,
+                "productId": 4
+            },
+            {
+                "collectionProductId": 7,
+                "collectionId": 1,
+                "productId": 3
+            }
+        ]
     },
     "variant": {
         "index": 3,
