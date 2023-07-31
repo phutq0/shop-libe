@@ -34,7 +34,7 @@ const load = () => {
             data: []
         },
         variant: {
-            index: 3,
+            index: 4,
             data: [
                 { variantId: 1, name: "Color" },
                 { variantId: 2, name: "Size" },
@@ -51,8 +51,23 @@ const load = () => {
             data: []
         },
         color: {
-            index: 0,
-            data: []
+            index: 14,
+            data: [
+                { colorId: 1, name: "Red", hex: "#d0312d" },
+                { colorId: 2, name: "Navy", hex: "#192841" },
+                { colorId: 3, name: "Blue", hex: "#1167b1" },
+                { colorId: 4, name: "White", hex: "#d0312d" },
+                { colorId: 5, name: "Yellow", hex: "#fee12b" },
+                { colorId: 6, name: "Black", hex: "#000000" },
+                { colorId: 7, name: "Beige", hex: "#e8dcca" },
+                { colorId: 8, name: "Burnt Orange", hex: "#cc5500" },
+                { colorId: 9, name: "Coral", hex: "#ff7f4f" },
+                { colorId: 10, name: "Brown", hex: "#654321" },
+                { colorId: 11, name: "Grey", hex: "#aaaaaa" },
+                { colorId: 12, name: "Pink", hex: "#ffc0cb" },
+                { colorId: 13, name: "Light Blue", hex: "#c4ffff" },
+                { colorId: 14, name: "Mint", hex: "#99edc3" },
+            ]
         }
     }
 }

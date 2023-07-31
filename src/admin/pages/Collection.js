@@ -76,8 +76,8 @@ const Collection = () => {
                 header={
                     <div className="flex flex-row text-sm font-semibold p-2 items-center">
                         <div className="flex-[1] text-gray-400">ID</div>
-                        <div className="flex-[2] text-gray-400">NAME</div>
-                        <div className="flex-[2] text-gray-400">DESCRIPTION</div>
+                        <div className="flex-[1.5] text-gray-400">NAME</div>
+                        <div className="flex-[2.5] text-gray-400">DESCRIPTION</div>
                         <div className="flex-[0.5] text-gray-400">Color</div>
                         <div className="flex-[1] text-gray-400">NUMBER PRODUCT</div>
                         <div className="flex-[1] text-center text-gray-400">MANAGE</div>
@@ -95,12 +95,12 @@ const Collection = () => {
                                     {item.collectionId}
                                 </div>
                                 <div
-                                    className="flex-[2] line-clamp-2 flex items-center"
+                                    className="flex-[1.5] line-clamp-2 flex items-center"
                                     onClick={() => handleUpdate(item)}>
                                     {item.name}
                                 </div>
                                 <div
-                                    className="flex-[2] flex items-center !line-clamp-3 flex-row"
+                                    className="flex-[2.5] flex items-center line-clamp-3"
                                     onClick={() => handleUpdate(item)}>
                                     {item.description}
                                 </div>

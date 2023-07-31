@@ -103,9 +103,8 @@ const CollectionModal = () => {
                 setQuery("");
             }
         }
+        loadProduct();
     }, [show]);
-
-    console.log(listProduct);
 
     return (
         <div>
@@ -150,59 +149,61 @@ const CollectionModal = () => {
                                         </label>
                                     </div>
                                 </div>
-                                <div className="flex flex-row text-sm mb-3">
-                                    <div className="font-semibold min-w-[100px]">Product:</div>
-                                    <div className="flex flex-col flex-1 ">
-                                        <div className="flex flex-row flex-wrap">
-                                            {listProduct.map((item, index) => (
-                                                <div
-                                                    key={item.productId ?? index}
-                                                    className="w-1/2 h-20 flex flex-row items-center cursor-pointer pb-2 mb-2 border-b pr-2">
-                                                    <img
-                                                        className="h-20 w-20 object-contain border rounded"
-                                                        src={"http://localhost:4000" + item.images[0]}
-                                                        alt={item.name} />
-                                                    <div className="flex-1 ml-2 pr-2">{item.name}</div>
-                                                    <FontAwesomeIcon
-                                                        icon={faXmark}
-                                                        className="text-xl hover:opacity-50"
-                                                        onClick={() => {
-                                                            _.remove(listProduct, i => i.productId == item.productId);
-                                                            setListProduct([...listProduct]);
-                                                        }} />
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div>
-                                            <input
-                                                className="w-[480px] h-9 rounded border outline-none border-gray-200 bg-gray-100 focus-within:border-gray-400 focus-within:bg-white px-2"
-                                                placeholder="Search"
-                                                value={query}
-                                                onChange={e => setQuery(e.target.value)} />
-                                            <div className="small-scrollbar flex flex-col mt-1 py-1 w-[480px] h-[420px] overflow-y-scroll border rounded shadow group-[input]:focus-within:flex">
-                                                {products.filter(item => !productIds.includes(item.productId)).map((item, index) => (
+                                {config.type == "UPDATE" && (
+                                    <div className="flex flex-row text-sm mb-3">
+                                        <div className="font-semibold min-w-[100px]">Product:</div>
+                                        <div className="flex flex-col flex-1 ">
+                                            <div className="flex flex-row flex-wrap">
+                                                {listProduct.map((item, index) => (
                                                     <div
                                                         key={item.productId ?? index}
-                                                        className="flex flex-row items-center pl-2 hover:bg-gray-100 py-1 cursor-pointer group border-b">
+                                                        className="w-1/2 h-20 flex flex-row items-center cursor-pointer pb-2 mb-2 border-b pr-2">
                                                         <img
                                                             className="h-20 w-20 object-contain border rounded"
                                                             src={"http://localhost:4000" + item.images[0]}
                                                             alt={item.name} />
-                                                        <div className="flex-1 py-1 pl-2 line-clamp-1 group-hover:font-semibold">{item.name}</div>
+                                                        <div className="flex-1 ml-2 pr-2">{item.name}</div>
                                                         <FontAwesomeIcon
-                                                            icon={faPlus}
-                                                            className="px-3 py-2 border rounded hover:bg-black hover:text-white"
+                                                            icon={faXmark}
+                                                            className="text-xl hover:opacity-50"
                                                             onClick={() => {
-                                                                listProduct.push(item);
+                                                                _.remove(listProduct, i => i.productId == item.productId);
                                                                 setListProduct([...listProduct]);
                                                             }} />
                                                     </div>
                                                 ))}
                                             </div>
+
+                                            <div>
+                                                <input
+                                                    className="w-[480px] h-9 rounded border outline-none border-gray-200 bg-gray-100 focus-within:border-gray-400 focus-within:bg-white px-2"
+                                                    placeholder="Search"
+                                                    value={query}
+                                                    onChange={e => setQuery(e.target.value)} />
+                                                <div className="small-scrollbar flex flex-col mt-1 py-1 w-[480px] h-[420px] overflow-y-scroll border rounded shadow group-[input]:focus-within:flex">
+                                                    {products.filter(item => !productIds.includes(item.productId)).map((item, index) => (
+                                                        <div
+                                                            key={item.productId ?? index}
+                                                            className="flex flex-row items-center pl-2 hover:bg-gray-100 py-1 cursor-pointer group border-b">
+                                                            <img
+                                                                className="h-20 w-20 object-contain border rounded"
+                                                                src={"http://localhost:4000" + item.images[0]}
+                                                                alt={item.name} />
+                                                            <div className="flex-1 py-1 pl-2 line-clamp-1 group-hover:font-semibold">{item.name}</div>
+                                                            <FontAwesomeIcon
+                                                                icon={faPlus}
+                                                                className="px-3 py-2 border rounded hover:bg-black hover:text-white"
+                                                                onClick={() => {
+                                                                    listProduct.push(item);
+                                                                    setListProduct([...listProduct]);
+                                                                }} />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                             <div className="flex flex-row px-1 py-2 border-t border-gray-300 text-sm font-semibold">
                                 <div

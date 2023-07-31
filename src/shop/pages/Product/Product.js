@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { product1, product2, product3, product4, product5, product6 } from "../../components/Image";
 import className from "./className";
 import { useParams } from "react-router-dom";
-import Api from "shop/api";
 import Utils from "shop/share/Utils";
 import { useDispatch } from "react-redux";
 import { thunkGetCart } from "shop/share/slices/Cart";
+import Api from "api2";
 
 const product_ = {
     id: 1,
@@ -35,49 +35,52 @@ const product_ = {
     ]
 }
 
-const color_ = {
-    "black": "000000",
-    "white": "ffffff",
-    "blue": "1167b1",
-    "green": "4aa02c",
-    "yellow": "fee12b",
-    "coral": "ff7f4f"
-}
-
 const Product = () => {
-
-    const dispatch = useDispatch()
 
     const [product, setProduct] = useState(product_);
     const [number, setNumber] = useState(1);
+    const [color, setColor] = useState({});
 
     const { product: path } = useParams();
     const [productId, setProductId] = useState(() => {
-        return Number(path.split("-").at(-1));
+        const tmp = path?.split("-") ?? [];
+        try {
+            const x = Number(tmp.at(-1));
+            return x;
+        } catch (error) {
+            return 1;
+        }
     });
 
     const loadData = async () => {
-        const response = await Api.product.getProductInformation(productId);
-        const detail = JSON.parse(response.data.product.detail);
-        setProduct({
-            ...response.data.product,
-            images: response.data.product.imageProduct.map(item => item.imageLink),
-            materials: detail.material.split("|").map(item => ({ name: item, selected: false })),
-            sizes: detail.size.split("|").map(item => ({ name: item, selected: false })),
-            colors: detail.color.split("|").map(item => ({ name: item, selected: false, hex: color_[item.toLowerCase()] })),
-            detail: detail
-        })
+        const result = Api.product.getProduct(productId);
+        setProduct(result.product);
     }
 
     const handleAddToCart = async () => {
-        const response = await Api.cart.addToCart(productId);
-        Utils.showToastSuccess("Add successfully!");
-        dispatch(thunkGetCart());
+
     }
 
     useEffect(() => {
         loadData()
+    }, [productId]);
+
+    useEffect(() => {
+        const result = Api.product.getListColor();
+        for (const i of result.colors) {
+            color[i.name] = i.hex;
+        }
     }, [])
+
+    useEffect(() => {
+        const tmp = path?.split("-") ?? [];
+        try {
+            const x = Number(tmp.at(-1));
+            setProductId(x);
+        } catch (error) {
+            setProductId(1);
+        }
+    }, [path])
 
     return (
         <div className={className.container}>
@@ -92,7 +95,7 @@ const Product = () => {
                         <img
                             key={index}
                             className={className.image}
-                            src={item} />
+                            src={"http://localhost:4000" + item} />
                     ))}
                 </div>
                 <div className={className.right}>

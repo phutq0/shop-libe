@@ -52,9 +52,11 @@ const SearchRight = () => {
         };
         if (show) {
             document.body.style.overflow = "hidden";
+            document.body.style.paddingRight = "8px";
         }
         else {
             document.body.style.overflow = "unset";
+            document.body.style.paddingRight = "0px";
         }
     }, [show]);
 

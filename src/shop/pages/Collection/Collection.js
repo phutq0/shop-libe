@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import ListProduct from "../../components/ListProduct";
 import { products } from "../../share/data";
 import Pagination from "shop/components/Pagination/Pagination";
-import Api from "shop/api";
+import Api from "api2";
 
 const datas = [
     {
@@ -43,32 +43,50 @@ const datas = [
 const Collection = () => {
 
     const { collection: collection_ } = useParams();
+    const [collectionId, setCollectionId] = useState(() => {
+        const tmp = collection_?.split("-") ?? [];
+        try {
+            const x = Number(tmp.at(-1));
+            return x;
+        } catch (error) {
+            return 1;
+        }
+    });
+    const [collection, setCollection] = useState({
+        name: "Collection",
+        description: "",
+        color: undefined,
+        products: []
+    })
     const [sort, setSort] = useState({
         display: "Sắp xếp theo"
     });
 
-    const [products, setProducts] = useState([]);
-
     const loadData = async () => {
-        const response = await Api.product.getListProduct({
-            page: 1,
-            pageSize: 100
-        });
-        console.log(response);
-        setProducts(response.data.productList.map(item => ({
-            ...item,
-            images: item.imageProduct.map(item => item.imageLink)
-        })));
+        const result = Api.collection.getCollection(collectionId);
+        setCollection(result.collection);
     }
 
     useEffect(() => {
+        const tmp = collection_?.split("-") ?? [];
+        try {
+            const x = Number(tmp.at(-1));
+            setCollectionId(x);
+        } catch (error) {
+            setCollectionId(1);
+        }
+    }, [collection_])
+
+    useEffect(() => {
         loadData();
-    }, [])
+    }, [collectionId]);
+
 
     return (
         <div className={className.container}>
-            <div className={className.header}>
-                <div className={className.name}>{"ALL"}</div>
+            <div className={className.header} style={{ backgroundColor: collection.color }}>
+                <div className={className.name}>{collection.name}</div>
+                <div className="px-3 xl:max-w-lg text-sm mt-3 xl:mt-0">{collection.description}</div>
             </div>
             <div className={className.top}>
                 <div className={className.collectionName}>ALL</div>
@@ -80,11 +98,12 @@ const Collection = () => {
             </div>
             <div className={className.content}>
                 <ListProduct
-                    data={products} />
+                    data={collection.products} />
                 <Pagination
                     classNames="mt-6"
                     total={1}
                     page={1}
+                    setPage={e => 1}
                 />
             </div>
         </div>

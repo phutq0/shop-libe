@@ -30,6 +30,8 @@ const Product = () => {
 
     useEffect(() => {
         loadData();
+        const result = Api.collection.getCollection(2);
+        console.log("collection", result);
     }, [page, step, query]);
 
     const handleCreate = async () => {
@@ -53,7 +55,7 @@ const Product = () => {
                 console.log(params);
                 const result = await Api.product.updateProduct(params);
                 console.log(result);
-                Utils.showToastSuccess("Create successfully!");
+                Utils.showToastSuccess("Update successfully!");
                 modalProductRef.current.hide();
                 loadData();
             }

@@ -56,7 +56,8 @@ const collection = {
         const limit = params.limit ?? 5;
         const query = params.query;
         const data = database.load();
-        const collections = query ? data.collection.data.filter(i => i.name.toLowerCase().includes(query.toLowerCase())).slice(page * limit, (page + 1) * limit) : data.collection.data.slice(page * limit, (page + 1) * limit);
+        const _collections = query ? data.collection.data.filter(i => i.name.toLowerCase().includes(query.toLowerCase())) : data.collection.data;
+        const collections = _collections.slice(page * limit, (page + 1) * limit)
         const collectionIds = collections.map(i => i.collectionId);
         const product = data.product.data;
         const collectionProduct = data.collectionProduct.data.filter(i => collectionIds.includes(i.collectionId));
@@ -72,7 +73,7 @@ const collection = {
                 })),
             }
         })
-        const total = collections.length;
+        const total = _collections.length;
         return {
             result: "success",
             total: total,
@@ -121,6 +122,23 @@ const collection = {
         return {
             result: "success",
             collection: data.collection.data[index]
+        }
+    },
+    getCollection: (collectionId) => {
+        const data = database.load();
+        const exist = data.collection.data.filter(i => i.collectionId == collectionId);
+        if (exist.length == 0) {
+            return {
+                result: "fail",
+                collection: null
+            }
+        }
+        const collection = exist[0];
+        const products = data.collectionProduct.data.filter(i => i.collectionId == collectionId).map(item => getProduct(item.productId).product);
+        collection.products = products;
+        return {
+            result: "success",
+            collection: collection
         }
     }
 }
@@ -196,7 +214,6 @@ const product = {
             })
             data.model.index += 1;
         }
-        console.log("images", result.data.links.join("|"));
         const product = {
             productId: productId,
             name: params.name,
@@ -216,6 +233,9 @@ const product = {
     deleteProduct: (productId) => {
         const data = database.load();
         _.remove(data.product.data, i => i.productId == productId);
+        _.remove(data.collectionProduct.data, i => i.productId == productId);
+        _.remove(data.productVariant.data, i => i.productId == productId);
+        _.remove(data.model.data, i => i.productId == productId);
         database.save(data);
         return {
             result: "success"

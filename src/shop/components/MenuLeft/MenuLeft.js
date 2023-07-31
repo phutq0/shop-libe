@@ -4,10 +4,13 @@ import { createRef, useEffect, useState } from "react";
 import { useSpring, animated } from "@react-spring/web";
 
 import className from "./className";
+import { useNavigate } from "react-router-dom";
 
 const menuLeftRef = createRef();
 
 const MenuLeft = () => {
+
+    const navigate = useNavigate();
 
     const [showShop, setShowShop] = useState(false);
     const [showTop, setShowTop] = useState(false);
@@ -25,7 +28,7 @@ const MenuLeft = () => {
             }
         });
     }
-    const startHideMenuleft = () => {
+    const startHideMenuLeft = () => {
         springMenuLeft.start({
             transform: "translateX(-100%)",
             config: {
@@ -37,9 +40,11 @@ const MenuLeft = () => {
     useEffect(() => {
         if (show) {
             document.body.style.overflow = "hidden";
+            document.body.style.paddingRight = "8px";
         }
         else {
             document.body.style.overflow = "unset";
+            document.body.style.paddingRight = "0px";
         }
     }, [show]);
 
@@ -72,11 +77,18 @@ const MenuLeft = () => {
         }
     });
     startShowShop();
+
+    const goTo = (path) => {
+        navigate(path);
+        startHideMenuLeft();
+        setShow(false);
+    }
+
     return (
         <div className={className.wrapper}>
             {show && (
                 <div className={className.overlay} onClick={() => {
-                    startHideMenuleft();
+                    startHideMenuLeft();
                     if (showShop) {
                         setShowTop(false);
                         setShowShop(false);
@@ -89,7 +101,7 @@ const MenuLeft = () => {
                 <div
                     className={className.iconClose}
                     onClick={() => {
-                        startHideMenuleft();
+                        startHideMenuLeft();
                         setShow(false);
                     }}>
                     <FontAwesomeIcon
@@ -97,7 +109,9 @@ const MenuLeft = () => {
                 </div>
                 <div className={className.item}>NEW IN</div>
                 <div className={className.shop}>
-                    <div className={className.title}>SHOP</div>
+                    <div
+                        className={className.title}
+                        onClick={() => goTo("/collection/all-1")}>SHOP</div>
                     <FontAwesomeIcon
                         icon={faCaretDown}
                         size={"1x"}
@@ -110,7 +124,9 @@ const MenuLeft = () => {
                         }} />
                 </div>
                 <animated.div className={className.shopWrapper} style={shopStyle}>
-                    <div className={className.item1}>ALL</div>
+                    <div
+                        className={className.item1}
+                        onClick={() => goTo("/collection/all-1")}>ALL</div>
                     <div className={className.tops}>
                         <div className={className.title}>TOPS</div>
                         <FontAwesomeIcon
@@ -126,17 +142,27 @@ const MenuLeft = () => {
                         <div className={className.item1}>T-SHIRTS</div>
                         <div className={className.item1}>SHIRTS & BLOUSES</div>
                     </animated.div>
-                    <div className={className.item1}>TROUSERS</div>
-                    <div className={className.item1}>SKIRTS & SHORTS</div>
-                    <div className={className.item1}>DRESSES & JUMPSUITS</div>
+                    <div
+                        className={className.item1}
+                        onClick={() => goTo("/collection/trousers-4")}>TROUSERS</div>
+                    <div
+                        className={className.item1}
+                        onClick={() => goTo("/collection/skirts-shorts-6")}>SKIRTS & SHORTS</div>
+                    <div
+                        className={className.item1}
+                        onClick={() => goTo("/collection/dresses-jumpsuits-5")}>DRESSES & JUMPSUITS</div>
                     <div className={className.item1}>OUTER-WEAR</div>
                     <div className={className.item1}>SWIMWEAR</div>
-                    <div className={className.item1}>ACCESSORIES</div>
+                    <div
+                        className={className.item1}
+                        onClick={() => goTo("/collection/accessories-3")}>ACCESSORIES</div>
                 </animated.div>
                 <div className={className.item}>SALE</div>
                 <div className={className.item}>LIBÉ AT WORK</div>
                 <div className={className.item}>DENIM WEAR</div>
-                <div className={className.item}>LIBÉ GOODS</div>
+                <div
+                    className={className.item}
+                    onClick={() => goTo("/collection/libe-good-2")}>LIBÉ GOODS</div>
                 <div className={className.item}>#WOMENSPEAK</div>
             </animated.div>
         </div>

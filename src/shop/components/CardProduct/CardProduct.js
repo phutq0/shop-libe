@@ -42,7 +42,7 @@ const CardProduct = ({ item }) => {
         <div
             className={className.wrapper}
             onClick={() => {
-                const path = Utils.convertToPath(item.name, item.id);
+                const path = Utils.convertToPath(item.name, item.productId);
                 navigate(`/product/${path}`)
             }}>
 
@@ -52,13 +52,13 @@ const CardProduct = ({ item }) => {
                     onMouseOver={() => setFocus(true)}
                     onMouseOut={() => setFocus(false)}>
                     <img
-                        src={item.images[0] ?? ""}
+                        src={"http://localhost:4000" + (item.images[0] ?? "")}
                         className={className.image}
                         alt={item.name} />
                     <img
                         className="absolute top-0 left-0 right-0 w-full rounded-sm border border-gray-300"
                         style={{ opacity: focus ? 1 : 0 }}
-                        src={item.images[1] ?? ""}
+                        src={"http://localhost:4000" + (item.images[1] ?? "")}
                         alt={item.name} />
                 </div>
                 <div className={className.name}>{item.name}</div>
