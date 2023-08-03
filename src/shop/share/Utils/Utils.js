@@ -75,6 +75,20 @@ const Utils = {
             toast.error(message)
         }
     },
+    showToastWarn: (message) => {
+        if (_.isArray(message)) {
+            toast.warn(
+                <>
+                    {message.map((item, index) =>
+                        <span key={index}>{item}<br /></span>
+                    )}
+                </>
+            )
+        }
+        else {
+            toast.warn(message)
+        }
+    },
     convertToPath: (name = "", id) => {
         const name_ = name.toLowerCase().split(" ").join("-");
         const path = name_ + "-" + String(id);

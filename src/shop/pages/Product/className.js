@@ -9,32 +9,32 @@ const className = {
     listImage: `w-full md:w-7/12`,
     image: `w-full mb-4`,
     right: `w-full md:w-5/12`,
-    infor: `w-full sticky top-12 flex flex-col md:px-6`,
+    info: `w-full sticky top-12 flex flex-col md:px-6`,
     name: `font-semibold text-xl`,
     price: `mt-3 py-3 text-lg font-bold border-y border-y-gray-200`,
     colors: `flex border-b border-b-gray-200 py-3 flex-wrap`,
     itemColor: `flex flex-col items-center w-12 cursor-pointer`,
     color: `w-10 h-10 border rounded-full border-gray-300 flex overflow-hidden p-1`,
-    colorSelected: `w-10 h-10 border rounded-full border-black flex overflow-hidden p-1`,
+    colorSelected: `w-10 h-10 border-2 rounded-full border-black flex overflow-hidden p-1`,
     colorName: `mb-1 text-sm`,
     colorHex: `flex-1 rounded-full`,
     material: `flex border-b border-b-gray-200 py-3 flex-wrap`,
     materialItem: `
         h-10 px-4 mr-2 cursor-pointer flex items-center justify-center rounded-sm 
-        text-xs border border-gray-300
+        text-xs border-2 border-gray-300
     `,
     materialSelected: `
         h-10 px-4 mr-2 flex items-center justify-center rounded-sm
-        text-xs font-semibold border border-black cursor-pointer
+        text-xs font-semibold border-2 border-black cursor-pointer
     `,
     size: `flex border-b border-b-gray-200 py-3 flex-wrap`,
     sizeItem: `
-        h-10 w-10 mr-2 flex items-center justify-center rounded-sm
-        text-xs border border-gray-300 cursor-pointer
+        h-10 min-w-[40px] mr-2 flex items-center justify-center rounded-sm
+        text-xs border-2 border-gray-300 cursor-pointer px-2
     `,
     sizeSelected: `
-        h-10 w-10 mr-2 flex items-center justify-center rounded-sm
-        text-xs font-semibold border border-black cursor-pointer
+        h-10 min-w-[40px] mr-2 flex items-center justify-center rounded-sm
+        text-xs font-semibold border-2 border-black cursor-pointer px-2
     `,
     number: `mt-4 flex h-9 overflow-hidden item-center`,
     numberButton: `
