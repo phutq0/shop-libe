@@ -11,13 +11,179 @@ import { thunkGetCollection } from "shop/share/slices/Collection";
 const modalCollectionRef = createRef();
 const modalProductRef = createRef();
 
+const orderRef = createRef();
+
 const Modal = () => {
 
     return (
         <>
             <CollectionModal />
             <ProductModal />
+            <OrderModal />
         </>
+    )
+}
+
+const OrderModal = () => {
+
+    const [show, setShow] = useState(false);
+    const defaultConfig = {
+        title: "Order",
+        buttonLeft: "Cancel",
+        buttonRight: "Save",
+        type: "CREATE",
+        onConfirm: () => 1,
+        onCancel: () => 1,
+    }
+
+    const [config, setConfig] = useState({ ...defaultConfig });
+
+    useEffect(() => {
+        orderRef.current = {
+            show: (config) => {
+                setConfig({ ...defaultConfig, ...config })
+                setShow(true);
+            },
+            hide: () => {
+                setShow(false);
+            }
+        }
+    }, []);
+
+
+    const onClickRight = () => {
+
+    }
+
+    useEffect(() => {
+        if (show) {
+
+        }
+    }, [show]);
+
+    return (
+        <div>
+            {show &&
+                <>
+                    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/30"></div>
+                    <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+                        <div className="absolute top-0 left-0 right-0 bottom-0"></div>
+                        <div className="w-full h-full bg-white border rounded shadow flex flex-col md:max-w-4xl z-[1]">
+                            <div className="text-center font-semibold py-2 border-b">{config.title}</div>
+                            <div className="flex-1 px-3 py-2 overflow-y-scroll">
+                                <div>Address</div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Name:</div>
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.name}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Phone:</div>
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.phone}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Street/House:</div>
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.street}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Province/City:</div>
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.province}
+                                        disabled={true}
+                                    />
+
+                                </div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">District/Town:</div>
+
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.district}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Village:</div>
+
+                                    <input
+                                        className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
+                                        value={config?.order?.address?.village}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <div>Product:</div>
+                                {/* {config?.order?.models?.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex flex-row h-20 items-center mb-4">
+                                        <img
+                                            src={"http://localhost:4000" + item.model.product.images[0]}
+                                            className="object-contain w-20 h-20 border rounded"
+                                        />
+                                        <div className="flex flex-col flex-1 pl-2">
+                                            <div
+                                                className="text-sm">
+                                                {item.model.product.name}
+                                            </div>
+                                            <div
+                                                className="text-xs text-gray-500">
+                                                {item.model.name.replace(/\|/g, " / ")}
+                                            </div>
+                                            <div className="text-xs text-gray-500">x{item.number}</div>
+                                        </div>
+                                        <div className="font-semibold text-sm flex flex-col">
+                                            <div>{item.model.product.price.toLocaleString()}₫</div>
+                                        </div>
+                                    </div>
+                                ))} */}
+                                {/* <div className="flex flex-row justify-between border-t-2 border-black pt-3 text-sm font-semibold">
+                                    <div>Sum:</div>
+                                    <div>{listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0).toLocaleString()}₫</div>
+                                </div>
+                                <div className="flex flex-row justify-between pt-3 text-sm font-semibold">
+                                    <div>Ship:</div>
+                                    <div>{(ship ? 45000 : 0).toLocaleString()}₫</div>
+                                </div>
+                                <div className="flex flex-row justify-between pt-3 text-base font-semibold">
+                                    <div>Total:</div>
+                                    <div>{(listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0) + (ship ? 45000 : 0)).toLocaleString()}₫</div>
+                                </div> */}
+
+
+
+                            </div>
+                            <div className="flex flex-row px-1 py-2 border-t border-gray-300 text-sm font-semibold">
+                                <div
+                                    className="flex-1 flex items-center justify-center border border-gray-200 rounded bg-red-500 py-2 hover:opacity-70 cursor-pointer text-white"
+                                    onClick={() => {
+                                        config.onCancel();
+                                        setShow(false);
+                                    }}>
+                                    {config.buttonLeft}
+                                </div>
+                                <div className="flex-1 flex items-center justify-center border border-gray-200 rounded bg-green-500 py-2 ml-1 hover:opacity-70 cursor-pointer text-white"
+                                    onClick={onClickRight}>
+                                    {config.buttonRight}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
+
+        </div>
     )
 }
 
@@ -697,4 +863,4 @@ const ProductModal = () => {
 }
 
 export default Modal
-export { modalProductRef, modalCollectionRef }
+export { modalProductRef, modalCollectionRef, orderRef }

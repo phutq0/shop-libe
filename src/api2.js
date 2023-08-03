@@ -462,31 +462,77 @@ const address = {
     }
 }
 
-const getOrder = (orderId) => {
+const getAddress = (addressId) => {
+    const data = database.load();
+    return data.address.data.filter(i => i.addressId = addressId)[0];
+}
 
+const getOrder = (orderId) => {
+    const data = database.load();
+    const order = data.order.data.filter(i => i.orderId == orderId)[0];
+    const models = data.orderProduct.data.filter(i => i.orderId == order.orderId).map(item => ({ ...item, model: getModel(item.modelId).model }));
+    order.address = getAddress(order.addressId);
+    order.account = data.account.data.filter(i => i.accountId == order.accountId)[0];
+    order.models = models;
+    return order;
 }
 
 const order = {
+    getOrder: getOrder,
+    getListOrder: (accountId = undefined, page = 0, limit = 5) => {
+        const data = database.load();
+        const orders = data.order.data.map(item => getOrder(item.orderId));
+        console.log("orders", orders);
+        if (accountId) {
+            const orders_ = orders.filter(i => i.accountId == accountId);
+            return {
+                result: "success",
+                orders: orders_.slice(page * limit, (page + 1) * limit),
+                total: orders_.length
+            }
+        }
+        else {
+            return {
+                result: "success",
+                orders: orders.slice(page * limit, (page + 1) * limit),
+                total: orders.length
+            }
+        }
+    },
     createOrder: (params) => {
         const data = database.load();
         const cart_ = cart.getCart(params.accountId).cart;
         const orderId = data.order.index + 1;
         const order = {
             orderId: orderId,
-            accountId: params.account,
+            accountId: params.accountId,
+            addressId: params.addressId,
             total: params.total,
             ship: params.ship,
             shipPrice: params.shipPrice,
             status: "Pending",
             payment: params.payment
         }
+        data.order.data.push(order);
+        data.order.index += 1;
         for (const i of cart_) {
-            console.log(i);
-            console.log({
+            const orderProductId = data.orderProduct.index + 1;
+            const orderProduct = {
+                orderProductId: orderProductId,
                 modelId: i.model.modelId,
-                price: i.model.product.price,
-                number: i.number
-            });
+                orderId: orderId,
+                number: i.number,
+                price: i.model.product.price
+            }
+            data.orderProduct.data.push(orderProduct);
+            data.orderProduct.index += 1;
+        }
+        database.save(data);
+        for (const i of cart_) {
+            cart.popFromCart(i.model.modelId, params.accountId, i.number);
+        }
+        return {
+            result: "success"
         }
     }
 }

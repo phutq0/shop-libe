@@ -96,9 +96,16 @@ const CheckOut = () => {
         if (selectedAddress) {
             const params = {
                 accountId: account.accountId,
-                addressId: selectedAddress
+                addressId: selectedAddress,
+                total: listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0),
+                ship: ship,
+                shipPrice: ship ? 45000 : 0,
+                payment: "Cash"
             }
             const result = Api.order.createOrder(params);
+            loadCart();
+            Utils.showToastSuccess("Order successfully!");
+            navigate("/");
         }
         else {
             const params = {
@@ -236,14 +243,14 @@ const CheckOut = () => {
                                                 className="px-2 h-10 flex items-center hover:bg-gray-100 text-sm cursor-pointer"
                                                 onClick={() => {
                                                     if (item.id_) {
-                                                        setSelectedAddress(item.addressId)
+                                                        setSelectedAddress(false)
                                                         setName("");
                                                         setPhone("");
                                                         setStreet("");
                                                         setProvince({ ...defaultProvince })
                                                     }
                                                     else {
-                                                        setSelectedAddress(true);
+                                                        setSelectedAddress(item.addressId);
                                                         setName(item.name);
                                                         setPhone(item.phone);
                                                         setStreet(item.street)

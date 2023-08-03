@@ -23,11 +23,9 @@ const Cart = () => {
     }
 
     useEffect(() => {
-        useEffect(() => {
-            if (listModel.length == 0) {
-                loadCart();
-            }
-        }, [])
+        if (listModel.length == 0) {
+            loadData();
+        }
     }, [])
 
     return (

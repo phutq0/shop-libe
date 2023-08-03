@@ -1667,18 +1667,11 @@
         ]
     },
     "cart": {
-        "index": 10,
-        "data": [
-            {
-                "cartId": 7,
-                "accountId": 1,
-                "modelId": 66,
-                "number": 1
-            }
-        ]
+        "index": 13,
+        "data": []
     },
     "address": {
-        "index": 3,
+        "index": 4,
         "data": [
             {
                 "addressId": 1,
@@ -1701,23 +1694,63 @@
                 "accountId": 1
             },
             {
-                "addressId": 3,
-                "name": "Phu le 2",
-                "phone": "2131321",
-                "street": "1231",
+                "addressId": 4,
+                "name": "ưeqwqe",
+                "phone": "13213",
+                "street": "1233",
                 "province": "Thành phố Hà Nội",
                 "district": "Quận Đống Đa",
-                "village": "Phường Hàng Bột",
+                "village": "Phường Quốc Tử Giám",
                 "accountId": 1
             }
         ]
     },
     "order": {
-        "index": 0,
-        "data": []
+        "index": 1,
+        "data": [
+            {
+                "orderId": 1,
+                "accountId": 1,
+                "addressId": 1,
+                "total": 1640000,
+                "ship": true,
+                "shipPrice": 45000,
+                "status": "Pending",
+                "payment": "Cash"
+            }
+        ]
     },
     "orderProduct": {
-        "index": 0,
-        "data": []
+        "index": 4,
+        "data": [
+            {
+                "orderProductId": 1,
+                "modelId": 66,
+                "orderId": 1,
+                "number": 1,
+                "price": 580000
+            },
+            {
+                "orderProductId": 2,
+                "modelId": 1,
+                "orderId": 1,
+                "number": 1,
+                "price": 350000
+            },
+            {
+                "orderProductId": 3,
+                "modelId": 7,
+                "orderId": 1,
+                "number": 1,
+                "price": 360000
+            },
+            {
+                "orderProductId": 4,
+                "modelId": 23,
+                "orderId": 1,
+                "number": 1,
+                "price": 350000
+            }
+        ]
     }
 }
