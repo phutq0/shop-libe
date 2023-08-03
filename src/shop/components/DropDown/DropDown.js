@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Tippy from "@tippyjs/react/headless";
 import { useSpring, animated } from "@react-spring/web";
+import { useResizeDetector } from "react-resize-detector";
+import _ from "lodash";
 
-const DropDown = ({ component, render, placement = "bottom-end", transformOrigin = "top", className }) => {
+const DropDown = ({ component, render, placement = "bottom-end", transformOrigin = "top", className, disable = false }) => {
 
     const [show, setShow] = useState(false);
     const [style, spring] = useSpring(() => ({
         transform: "scaleY(0)"
     }));
+
+    const { width, ref } = useResizeDetector()
 
     const onMount = () => {
         spring.start({
@@ -19,15 +23,17 @@ const DropDown = ({ component, render, placement = "bottom-end", transformOrigin
     const onHide = ({ unmount }) => {
         spring.start({
             transform: "scaleY(0)",
+            onRest: unmount,
             config: { duration: 100, clamp: true }
         })
     }
 
     return (
-        <div className={className}>
+        <div className={className} ref={ref}>
             <Tippy
                 interactive={true}
                 visible={show}
+                // onBeforeUpdate={e => console.log(e.popper.style.cssText)}
                 placement={placement}
                 onClickOutside={() => setShow(false)}
                 animation={true}
@@ -37,18 +43,21 @@ const DropDown = ({ component, render, placement = "bottom-end", transformOrigin
                     <animated.div
                         style={{
                             ...style,
-                            transformOrigin: transformOrigin
+                            transformOrigin: transformOrigin,
+                            width: width
                         }}
                         onClick={() => setShow(!show)}
                         {...attrs}>
                         {render}
                     </animated.div>
                 )}>
-                <div onClick={() => setShow(!show)}>
-                    {component}
+                <div
+                    className={disable ? "cursor-default" : "cursor-pointer"}
+                    onClick={() => disable ? 1 : setShow(!show)}>
+                    {_.isFunction(component) ? component(show) : component}
                 </div>
-            </Tippy>
-        </div>
+            </Tippy >
+        </div >
     )
 }
 

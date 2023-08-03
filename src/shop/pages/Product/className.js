@@ -17,7 +17,7 @@ const className = {
     color: `w-10 h-10 border rounded-full border-gray-300 flex overflow-hidden p-1`,
     colorSelected: `w-10 h-10 border-2 rounded-full border-black flex overflow-hidden p-1`,
     colorName: `mb-1 text-sm`,
-    colorHex: `flex-1 rounded-full`,
+    colorHex: `flex-1 rounded-full border`,
     material: `flex border-b border-b-gray-200 py-3 flex-wrap`,
     materialItem: `
         h-10 px-4 mr-2 cursor-pointer flex items-center justify-center rounded-sm 

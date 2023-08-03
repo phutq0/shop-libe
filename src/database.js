@@ -6,6 +6,7 @@ class Product {
     variant
     productVariant
     model
+    cart
 }
 
 /**
@@ -68,12 +69,28 @@ const load = () => {
                 { colorId: 13, name: "Light Blue", hex: "#c4ffff" },
                 { colorId: 14, name: "Mint", hex: "#99edc3" },
             ]
+        },
+        cart: {
+            index: 0,
+            data: []
+        },
+        address: {
+            index: 0,
+            data: []
+        },
+        order: {
+            index: 0,
+            data: []
+        },
+        orderProduct: {
+            index: 0,
+            data: []
         }
     }
 }
 
 const save = (database) => {
-    localStorage.setItem("database", JSON.stringify(database));
+    localStorage.setItem("database", JSON.stringify(database, null, 4));
 }
 
 const database = {

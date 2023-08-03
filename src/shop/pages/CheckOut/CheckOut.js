@@ -1,37 +1,21 @@
 import { product1 } from "shop/components/Image"
 import className from "./className";
 import { provinces, districts, villages } from "shop/share/data";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Api from "shop/api";
+// import Api from "shop/api";
 import { setListProductDetail, thunkGetCart } from "shop/share/slices/Cart";
 import Utils from "shop/share/Utils";
+import DropDown from "shop/components/DropDown";
+import Api from "api2";
+
+const province_index = {};
+const district_index = {};
+const village_index = {};
 
 const CheckOut = () => {
 
-    const products = [
-        {
-            id: 1,
-            name: "Black Backless Short Sleeve Top",
-            size: "M",
-            color: "Black",
-            material: "Jersey",
-            price: 290000,
-            number: 1,
-            image: product1
-        },
-        {
-            id: 2,
-            name: "Black Backless Short Sleeve Top",
-            size: "XL",
-            color: "Black",
-            material: "Jersey",
-            price: 290000,
-            number: 1,
-            image: product1
-        },
-    ]
     const defaultProvince = {
         id: 0,
         name: "Select Province/City"
@@ -55,56 +39,40 @@ const CheckOut = () => {
     const [street, setStreet] = useState("");
 
     const [ship, setShip] = useState(true);
+    const { account } = useSelector(state => state.account);
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
-    const { listProduct, listProductDetail } = useSelector(state => state.cart);
+    const { listModel } = useSelector(state => state.cart);
     const [addresses, setAddresses] = useState([]);
 
-    const getData = async () => {
-        const data = [];
-        for (const item of listProduct) {
-            const response = await Api.product.getProductInformation(item.productId);
-            const product = response.data.product;
-            data.push({
-                ...product,
-                images: product.imageProduct.map(item => item.imageLink),
-                detail: JSON.parse(product.detail ?? "{}")
-            })
-        }
-        dispatch(setListProductDetail(data))
+    const loadCart = () => {
+        dispatch(thunkGetCart(account.accountId));
     }
 
+    useEffect(() => {
+        if (listModel.length == 0) {
+            loadCart();
+        }
+    }, [])
+
     const getListAddress = async () => {
-        const response = await Api.address.getListAddress({
-            pageSize: 100,
-            page: 1
-        });
-        const arr = response.data.items.filter(i => i.userId == 2);
-        const address = arr.map(item => ({
-            ...item,
-            province_: provinces.filter(i => i.name == item.province)[0],
-            district_: districts.filter(i => i.name == item.district)[0],
-            village_: villages.filter(i => i.name == item.country)[0],
-        }))
-        setAddresses(address);
+        const result = Api.address.getListAddress(account.accountId);
+        setAddresses(result.addresses);
     }
 
     useEffect(() => {
         getListAddress()
     }, [])
 
-    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [selectedAddress, setSelectedAddress] = useState(false);
 
-    useEffect(() => {
-        getData();
-    }, [listProduct])
 
     useEffect(() => {
         if (selectedAddress) {
-            setDistrict({ ...selectedAddress.district_ });
+            return;
         }
         else {
             setDistrict({ ...defaultDistrict });
@@ -114,7 +82,7 @@ const CheckOut = () => {
 
     useEffect(() => {
         if (selectedAddress) {
-            setVillage({ ...selectedAddress.village_ });
+            return;
         }
         else {
             setVillage({ ...defaultVillage });
@@ -127,78 +95,95 @@ const CheckOut = () => {
         }
         if (selectedAddress) {
             const params = {
-                addressId: selectedAddress.id,
-                userId: selectedAddress.userId,
-                paymentMethod: "Thanh toán khi nhận hàng",
-                note: "Không cho note",
-                total: listProductDetail.reduce((prev, item) => prev + item.price, 0) + (ship ? 45000 : 0),
-                productIdArray: listProductDetail.map(item => item.id)
-            };
-            const response = await Api.order.createOrder(params);
-            Utils.showToastSuccess("Order successfully!");
-            for (const item of listProductDetail) {
-                await Api.cart.removeFromCart(item.id);
+                accountId: account.accountId,
+                addressId: selectedAddress
             }
-            dispatch(thunkGetCart());
-            navigate("/")
+            const result = Api.order.createOrder(params);
         }
         else {
-            const response = await Api.address.createAddress({
+            const params = {
                 name: name,
                 phone: phone,
+                street: street,
                 province: province.name,
-                country: village.name,
                 district: district.name,
-                streetNumber: street,
-                note: "Không có note!"
-            });
-            const params = {
-                addressId: response.data.id,
-                userId: response.data.userId,
-                paymentMethod: "Thanh toán khi nhận hàng",
-                note: "Không cho note",
-                total: listProductDetail.reduce((prev, item) => prev + item.price, 0) + (ship ? 45000 : 0),
-                productIdArray: listProductDetail.map(item => item.id)
-            };
-            await Api.order.createOrder(params);
-            Utils.showToastSuccess("Order successfully!");
-            for (const item of listProductDetail) {
-                await Api.cart.removeFromCart(item.id);
+                village: village.name,
+                accountId: account.accountId
             }
-            dispatch(thunkGetCart());
-            navigate("/")
+            return
+            const result = Api.address.createAddress(params);
+
+            // const response = await Api.address.createAddress({
+            //     name: name,
+            //     phone: phone,
+            //     province: province.name,
+            //     country: village.name,
+            //     district: district.name,
+            //     streetNumber: street,
+            //     note: "Không có note!"
+            // });
+            // const params = {
+            //     addressId: response.data.id,
+            //     userId: response.data.userId,
+            //     paymentMethod: "Thanh toán khi nhận hàng",
+            //     note: "Không cho note",
+            //     total: listProductDetail.reduce((prev, item) => prev + item.price, 0) + (ship ? 45000 : 0),
+            //     productIdArray: listProductDetail.map(item => item.id)
+            // };
+            // await Api.order.createOrder(params);
+            // Utils.showToastSuccess("Order successfully!");
+            // for (const item of listProductDetail) {
+            //     await Api.cart.removeFromCart(item.id);
+            // }
+            // dispatch(thunkGetCart());
+            // navigate("/")
         }
     }
+
+    useLayoutEffect(() => {
+        for (const i of provinces) {
+            province_index[i.name] = i.id;
+        }
+        for (const i of districts) {
+            district_index[i.name] = i.id;
+        }
+        for (const i of villages) {
+            village_index[i.name] = i.id;
+        }
+    }, [])
 
     return (
         <div className={className.container}>
             <div className={className.right}>
                 <div className={className.bill}>
                     <div className="flex flex-col pl-3 w-full">
-                        {listProductDetail.map((item, index) => (
+                        {listModel.map((item, index) => (
                             <div
                                 key={index}
                                 className="flex flex-row h-20 items-center mb-4">
                                 <img
-                                    src={item.images[0]}
+                                    src={"http://localhost:4000" + item.model.product.images[0]}
                                     className="object-contain w-20 h-20 border rounded"
                                 />
                                 <div className="flex flex-col flex-1 pl-2">
                                     <div
                                         className="text-sm">
-                                        {item.name}
+                                        {item.model.product.name}
                                     </div>
                                     <div
                                         className="text-xs text-gray-500">
-                                        {item.detail.color.split("|").at(0)} / {item.detail.material.split("|").at(0)} / {item.detail.size.split("|").at(0)}
+                                        {item.model.name.replace(/\|/g, " / ")}
                                     </div>
+                                    <div className="text-xs text-gray-500">x{item.number}</div>
                                 </div>
-                                <div className="font-semibold text-sm">{item.price.toLocaleString()}₫</div>
+                                <div className="font-semibold text-sm flex flex-col">
+                                    <div>{item.model.product.price.toLocaleString()}₫</div>
+                                </div>
                             </div>
                         ))}
                         <div className="flex flex-row justify-between border-t-2 border-black pt-3 text-sm font-semibold">
                             <div>Sum:</div>
-                            <div>{listProductDetail.reduce((prev, item) => prev + item.price, 0).toLocaleString()}₫</div>
+                            <div>{listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0).toLocaleString()}₫</div>
                         </div>
                         <div className="flex flex-row justify-between pt-3 text-sm font-semibold">
                             <div>Ship:</div>
@@ -206,7 +191,7 @@ const CheckOut = () => {
                         </div>
                         <div className="flex flex-row justify-between pt-3 text-base font-semibold">
                             <div>Total:</div>
-                            <div>{(listProductDetail.reduce((prev, item) => prev + item.price, 0) + (ship ? 45000 : 0)).toLocaleString()}₫</div>
+                            <div>{(listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0) + (ship ? 45000 : 0)).toLocaleString()}₫</div>
                         </div>
                     </div>
                     <div
@@ -228,38 +213,62 @@ const CheckOut = () => {
                         <div className={className.login}>
                             Login
                         </div> */}
-                        <select
-                            className="w-full border rounded border-gray-300 py-3 text-sm font-semibold"
-                            onChange={e => {
-                                const tmp = JSON.parse(e.target.value);
-                                if (tmp.id != 0) {
-                                    setSelectedAddress(tmp);
-                                    setName(tmp.name);
-                                    setPhone(tmp.phone);
-                                    setStreet(tmp.streetNumber);
-                                    setVillage(tmp.village_);
-                                    setDistrict(tmp.district_);
-                                    setProvince(tmp.province_);
-                                }
-                                else {
-                                    setSelectedAddress(null);
-                                    setName("");
-                                    setPhone("");
-                                    setStreet("");
-                                    setProvince({ ...defaultProvince });
-                                }
-                            }}>
-                            {[{ id: 0, name: "Select" }, ...addresses].map(item => {
-                                const display = item.id == 0 ? "Select Saved Address" : [item.name, item.phone, item.streetNumber, item.country, item.district].join(", ")
-                                return (
-                                    <option
-                                        key={item.id}
-                                        value={JSON.stringify(item)}>
-                                        {display}
-                                    </option>
-                                )
-                            })}
-                        </select>
+                        <DropDown
+                            className="w-full"
+                            component={(show) => (
+                                <div
+                                    className="w-full h-10 border rounded flex items-center px-2 cursor-pointer"
+                                    style={{ borderColor: show ? "black" : undefined }}>
+
+                                    <div className="!line-clamp-1">
+                                        {!selectedAddress ? "New address" : [name, phone, street, village.name, district.name, province.name].join(" - ")}
+                                    </div>
+                                </div>
+                            )
+                            }
+                            render={
+                                <div className="w-full flex flex-col py-1 border rounded shadow-md bg-white -mt-2">
+                                    {[{ id_: -1 }, ...addresses].map((item, index) => {
+                                        const display = item.id_ ? "New address" : [item.name, item.phone, item.street, item.village, item.district, item.province].join(" - ");
+                                        return (
+                                            <div
+                                                key={item.addressId ?? index}
+                                                className="px-2 h-10 flex items-center hover:bg-gray-100 text-sm cursor-pointer"
+                                                onClick={() => {
+                                                    if (item.id_) {
+                                                        setSelectedAddress(item.addressId)
+                                                        setName("");
+                                                        setPhone("");
+                                                        setStreet("");
+                                                        setProvince({ ...defaultProvince })
+                                                    }
+                                                    else {
+                                                        setSelectedAddress(true);
+                                                        setName(item.name);
+                                                        setPhone(item.phone);
+                                                        setStreet(item.street)
+                                                        setProvince({
+                                                            id: province_index[item.province],
+                                                            name: item.province
+                                                        })
+                                                        setDistrict({
+                                                            id: district_index[item.district],
+                                                            name: item.district
+                                                        })
+                                                        setVillage({
+                                                            id: village_index[item.village],
+                                                            name: item.village
+                                                        })
+                                                    }
+                                                }}>
+                                                <div className="!line-clamp-1">
+                                                    {display}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            } />
                     </div>
                     <div className="flex flex-col mt-3">
                         <div className="border rounded border-gray-300 flex h-10 mb-3">
@@ -267,6 +276,7 @@ const CheckOut = () => {
                                 placeholder="Name"
                                 className="flex-1 rounded bg-gray-100 focus-within:bg-white outline-none px-2 text-sm"
                                 value={name}
+                                disabled={selectedAddress}
                                 onChange={e => setName(e.target.value)} />
                         </div>
                         <div className="border rounded border-gray-300 flex h-10 mb-3">
@@ -274,6 +284,7 @@ const CheckOut = () => {
                                 placeholder="Phone"
                                 className="flex-1 rounded bg-gray-100 focus-within:bg-white outline-none px-2 text-sm"
                                 value={phone}
+                                disabled={selectedAddress}
                                 onChange={e => setPhone(e.target.value)} />
                         </div>
                         <div className="border rounded border-gray-300 flex h-10 mb-3">
@@ -281,42 +292,86 @@ const CheckOut = () => {
                                 placeholder="Street/House"
                                 className="flex-1 rounded bg-gray-100 focus-within:bg-white outline-none px-2 text-sm"
                                 value={street}
+                                disabled={selectedAddress}
                                 onChange={e => setStreet(e.target.value)} />
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-col mb-3">
                                 <div className="text-sm font-semibold">Select Province/City</div>
-                                <select
-                                    className="h-10 border rounder text-sm rounded border-gray-300"
-                                    value={JSON.stringify(province)}
-                                    onChange={i => setProvince(JSON.parse(i.target.value))}>
-                                    {[defaultProvince, ...provinces].map(item => (
-                                        <option
-                                            key={item.id}
-                                            value={JSON.stringify(item)}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <DropDown
+                                    className="w-full"
+                                    disable={selectedAddress}
+                                    component={show => (
+                                        <div
+                                            className="w-full h-10 border rounded flex items-center px-2"
+                                            style={{ borderColor: show ? "black" : undefined }}>
+                                            {province.name}
+                                        </div>
+                                    )}
+                                    render={
+                                        <div className="w-full h-[300px] bg-white rounded shadow-xl overflow-y-scroll py-1 border -mt-2">
+                                            {[defaultProvince, ...provinces].map(item => (
+                                                <div
+                                                    key={item.id}
+                                                    className="h-8 flex items-center pl-2 hover:bg-gray-100 hover:font-semibold"
+                                                    onClick={() => setProvince(item)}>
+                                                    {item.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    } />
+
                             </div>
                             <div className="flex flex-col mb-3">
                                 <div className="text-sm font-semibold">Select District</div>
-                                <select
-                                    className="h-10 border rounder text-sm rounded border-gray-300"
-                                    value={JSON.stringify(district)}
-                                    onChange={i => setDistrict(JSON.parse(i.target.value))}>
-                                    {[defaultDistrict, ...districts.filter(i => i.provinceId == province.id)].map(item => (
-                                        <option
-                                            key={item.id}
-                                            value={JSON.stringify(item)}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <DropDown
+                                    className="w-full"
+                                    disable={selectedAddress}
+                                    component={show => (
+                                        <div
+                                            className="w-full h-10 border rounded flex items-center px-2"
+                                            style={{ borderColor: show ? "black" : undefined }}>
+                                            {district.name}
+                                        </div>
+                                    )}
+                                    render={
+                                        <div className="w-full max-h-[300px] bg-white rounded shadow-xl overflow-y-scroll py-1 border -mt-2">
+                                            {[defaultDistrict, ...districts.filter(i => i.provinceId == province.id)].map(item => (
+                                                <div
+                                                    key={item.id}
+                                                    className="h-8 flex items-center pl-2 hover:bg-gray-100 cursor-pointer hover:font-semibold"
+                                                    onClick={() => setDistrict(item)}>
+                                                    {item.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    } />
                             </div>
                             <div className="flex flex-col mb-3">
                                 <div className="text-sm font-semibold">Select Village</div>
-                                <select
+                                <DropDown
+                                    className="w-full"
+                                    disable={selectedAddress}
+                                    component={show => (
+                                        <div
+                                            className="w-full h-10 border rounded flex items-center px-2"
+                                            style={{ borderColor: show ? "black" : undefined }}>
+                                            {village.name}
+                                        </div>
+                                    )}
+                                    render={
+                                        <div className="w-full max-h-[300px] bg-white rounded shadow-xl overflow-y-scroll py-1 border -mt-2">
+                                            {[defaultVillage, ...villages.filter(i => i.districtId == district.id)].map(item => (
+                                                <div
+                                                    key={item.id}
+                                                    className="h-8 flex items-center pl-2 hover:bg-gray-100 cursor-pointer hover:font-semibold"
+                                                    onClick={() => setVillage(item)}>
+                                                    {item.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    } />
+                                {/* <select
                                     className="h-10 border rounder text-sm rounded border-gray-300"
                                     value={JSON.stringify(village)}
                                     onChange={i => setVillage(JSON.parse(i.target.value))}>
@@ -327,7 +382,7 @@ const CheckOut = () => {
                                             {item.name}
                                         </option>
                                     ))}
-                                </select>
+                                </select> */}
                             </div>
                         </div>
                     </div>

@@ -1678,7 +1678,7 @@
         ]
     },
     "address": {
-        "index": 4,
+        "index": 3,
         "data": [
             {
                 "addressId": 1,
@@ -1701,13 +1701,13 @@
                 "accountId": 1
             },
             {
-                "addressId": 4,
-                "name": "ưeqwqe",
-                "phone": "13213",
-                "street": "1233",
+                "addressId": 3,
+                "name": "Phu le 2",
+                "phone": "2131321",
+                "street": "1231",
                 "province": "Thành phố Hà Nội",
                 "district": "Quận Đống Đa",
-                "village": "Phường Quốc Tử Giám",
+                "village": "Phường Hàng Bột",
                 "accountId": 1
             }
         ]

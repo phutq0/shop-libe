@@ -1,7 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const getAccount = () => {
+    const data = localStorage.getItem("account");
+    if (data) {
+        return JSON.parse(data);
+    }
+    return null;
+}
+
 const initialState = {
-    account: null
+    account: getAccount()
 }
 
 const accountSlice = createSlice({

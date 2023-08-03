@@ -14,7 +14,7 @@ const account = {
         }
         const account = {
             ...data_,
-            id: data.account.index + 1
+            accountId: data.account.index + 1
         }
         data.account.data.push(account);
         data.account.index += 1;
@@ -336,10 +336,168 @@ const product = {
     }
 }
 
+const getModel = (modelId) => {
+    const data = database.load();
+    const model = data.model.data.filter(i => i.modelId == modelId)[0];
+    model.product = getProduct(model.productId).product;
+    return {
+        result: "success",
+        model: model
+    }
+}
+
+const cart = {
+    addToCart: (modelId, accountId, number) => {
+        const data = database.load();
+        const exist = data.cart.data.filter(i => (i.modelId == modelId && i.accountId == accountId));
+        if (exist.length > 0) {
+            const index = data.cart.data.findIndex(i => (i.modelId == modelId && i.accountId == accountId));
+            const model = getModel(exist[0].modelId).model;
+            if (exist[0].number + number > model.remain) {
+                return {
+                    result: "fail",
+                    message: "Not enough product in stock!"
+                }
+            }
+            data.cart.data[index].number += number;
+            database.save(data);
+            return {
+                result: "success"
+            }
+        }
+        else {
+            const cartId = data.cart.index + 1;
+            const cart = {
+                cartId: cartId,
+                accountId: accountId,
+                modelId: modelId,
+                number: number
+            }
+            data.cart.data.push(cart);
+            data.cart.index += 1;
+            database.save(data);
+            return {
+                result: "success"
+            }
+        }
+    },
+    popFromCart: (modelId, accountId, number) => {
+        const data = database.load();
+        const exist = data.cart.data.filter(i => (i.modelId == modelId && i.accountId == accountId))[0];
+        const index = data.cart.data.findIndex(i => (i.modelId == modelId && i.accountId == accountId));
+        if (exist.number - number <= 0) {
+            _.remove(data.cart.data, i => i.cartId == exist.cartId);
+        }
+        else {
+            data.cart.data[index].number -= number;
+        }
+        database.save(data);
+        return {
+            result: "success"
+        }
+
+    },
+    getCart: (accountId) => {
+        const data = database.load();
+        const cart = data.cart.data.filter(i => i.accountId == accountId).map(item => ({
+            ...item,
+            model: getModel(item.modelId).model
+        }));
+        return {
+            result: "success",
+            cart: cart
+        }
+    }
+}
+
+const address = {
+    getListAddress: (accountId = undefined) => {
+        if (!accountId) {
+            return {
+                result: "success",
+                addresses: []
+            }
+        }
+        const data = database.load();
+        const addresses = data.address.data.filter(i => i.accountId == accountId);
+        return {
+            result: "success",
+            addresses: addresses
+        }
+    },
+    createAddress: (params) => {
+        const data = database.load();
+        const addressId = data.address.index + 1;
+        const address = {
+            addressId: addressId,
+            ...params
+        };
+        data.address.data.push(address);
+        data.address.index += 1;
+        database.save(data);
+        return {
+            result: "success",
+            address: address
+        }
+    },
+    updateAddress: (params) => {
+        const data = database.load();
+        const index = data.address.data.findIndex(i => i.addressId == params.addressId);
+        data.address.data[index] = {
+            ...params
+        }
+        database.save(data);
+        return {
+            result: "success",
+            address: data.address.data[index]
+        }
+    },
+    deleteAddress: (addressId) => {
+        const data = database.load();
+        _.remove(data.address.data, i => i.addressId == addressId);
+        database.save(data);
+        return {
+            result: "success"
+        }
+    }
+}
+
+const getOrder = (orderId) => {
+
+}
+
+const order = {
+    createOrder: (params) => {
+        const data = database.load();
+        const cart_ = cart.getCart(params.accountId).cart;
+        const orderId = data.order.index + 1;
+        const order = {
+            orderId: orderId,
+            accountId: params.account,
+            total: params.total,
+            ship: params.ship,
+            shipPrice: params.shipPrice,
+            status: "Pending",
+            payment: params.payment
+        }
+        for (const i of cart_) {
+            console.log(i);
+            console.log({
+                modelId: i.model.modelId,
+                price: i.model.product.price,
+                number: i.number
+            });
+        }
+    }
+}
+
 const Api = {
     account,
     collection,
-    product
+    product,
+    cart,
+    address,
+    order
 }
 
 export default Api

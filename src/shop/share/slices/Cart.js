@@ -1,35 +1,35 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import Api from "shop/api";
+import Api from "api2";
 
 const thunkGetCart = createAsyncThunk(
     "thunkGetCart",
-    async () => {
-        return Api.cart.getCart();
+    async (accountId) => {
+        return Api.cart.getCart(accountId);
     }
 )
 
 const initialState = {
-    listProduct: [],
-    listProductDetail: []
+    listModel: []
 }
 
 const cartSlice = createSlice({
     name: "cart",
     initialState: initialState,
     reducers: {
-        setListProductDetail: (state, { payload }) => {
-            state.listProductDetail = payload
+        setListModel: (state, { payload }) => {
+            state.listModel = payload
         },
     },
     extraReducers: builder => {
         builder.addCase(thunkGetCart.fulfilled, (state, { payload }) => {
-            state.listProduct = payload.data;
+            console.log(payload);
+            state.listModel = payload.cart;
         })
     }
 });
 
 const { reducer: cartReducer, actions } = cartSlice;
-const { setListProductDetail } = actions;
+const { setListModel } = actions;
 
 export default cartReducer
-export { setListProductDetail, thunkGetCart }
+export { setListModel, thunkGetCart }

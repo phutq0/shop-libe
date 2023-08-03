@@ -14,7 +14,7 @@ import {
 	Search
 } from "./shop/pages";
 import store from "./shop/share/Store";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import Api from "./shop/api";
 import Utils from "./shop/share/Utils";
 import { setAccount } from "./shop/share/slices/Account";
@@ -55,6 +55,7 @@ function App() {
 
 	return (
 		<Provider store={store}>
+			<AppStart />
 			<Router>
 				<Routes>
 					{pages.map(({ id, path, requireLogin, Layout, Page }) => (
@@ -70,7 +71,6 @@ function App() {
 					))}
 				</Routes>
 				<Toast />
-				<AppStart />
 			</Router>
 		</Provider>
 	);
@@ -81,6 +81,7 @@ const AppStart = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+
 		const rememberLogin = async () => {
 			await Utils.wait(1000);
 			dispatch(setIsAppLoading(false));

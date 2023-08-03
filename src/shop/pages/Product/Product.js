@@ -3,7 +3,7 @@ import { product1, product2, product3, product4, product5, product6 } from "../.
 import className from "./className";
 import { useParams } from "react-router-dom";
 import Utils from "shop/share/Utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { thunkGetCart } from "shop/share/slices/Cart";
 import Api from "api2";
 import { useMemo } from "react";
@@ -39,6 +39,8 @@ const product_ = {
 
 const Product = () => {
 
+    const dispatch = useDispatch();
+
     const [product, setProduct] = useState({
         id: 0,
         name: "",
@@ -52,6 +54,7 @@ const Product = () => {
     });
     const [number, setNumber] = useState(1);
     const [color, _] = useState({});
+    const { account } = useSelector(state => state.account);
 
     const { product: path } = useParams();
     const [productId, setProductId] = useState(() => {
@@ -73,7 +76,7 @@ const Product = () => {
             sizes: getRender(result.product, "Size"),
             capacities: getRender(result.product, "Capacity"),
         }
-        console.log(product);
+        // console.log("[PRODUCT]", product);
         setProduct(product);
     }
 
@@ -103,13 +106,13 @@ const Product = () => {
         }
         const name = selected.join("|");
         const tmp = product?.models?.data?.filter(i => i.name == name);
-        console.log(tmp);
         if (tmp && tmp.length > 0) {
             if (number > tmp[0].remain) {
                 setNumber(tmp[0].remain);
             }
             return {
                 value: tmp[0].remain,
+                model: tmp[0],
                 miss: miss
             }
         }
@@ -123,6 +126,19 @@ const Product = () => {
         if (remain.miss.length > 0) {
             Utils.showToastWarn("Please select " + remain.miss.join(", ") + "!");
             return;
+        }
+        if (!account) {
+            return;
+        }
+        if (remain.model) {
+            const result = Api.cart.addToCart(remain.model.modelId, account.accountId, number);
+            if (result.result == "success") {
+                Utils.showToastSuccess("Add to cart successfully!");
+                dispatch(thunkGetCart(account.accountId));
+            }
+            else {
+                Utils.showToastError(result.message);
+            }
         }
     }
 
@@ -174,6 +190,8 @@ const Product = () => {
             color[i.name] = i.hex;
         }
     }, []);
+
+
 
 
     return (
@@ -261,6 +279,24 @@ const Product = () => {
                                 ))}
                             </div>
                         )}
+                        {product.capacities.length > 0 && (
+                            <div className={className.size}>
+                                {product.capacities.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className={item.selected ? className.sizeSelected : className.sizeItem}
+                                        onClick={() => {
+                                            product.capacities = product.sizes.map((_item, _index) => ({
+                                                ..._item,
+                                                selected: _index == index ? true : false
+                                            }));
+                                            setProduct({ ...product });
+                                        }}>
+                                        {item.name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         {remain.value && (
                             <div className="mt-2 text-sm font-semibold">Remain: {remain.value} product(s)</div>
                         )}
@@ -284,7 +320,7 @@ const Product = () => {
                             <div
                                 className={className.numberButton}
                                 onClick={() => {
-                                    if (remain) {
+                                    if (remain.value) {
                                         const x = Math.min(number + 1, remain.value)
                                         setNumber(x)
                                     }
@@ -315,7 +351,7 @@ const Product = () => {
                                                 {item}
                                             </div>
                                             :
-                                            <div className="h-3"></div>
+                                            <div key={index} className="h-3"></div>
                                     ))}
                                 </div>
                                 {/* <textarea

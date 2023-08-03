@@ -18,9 +18,9 @@ const className = {
         flex flex-row h-[144px] items-center py-2 mr-1
         border-t border-gray-400 relative
     `,
-    image: `border rounded-sm h-full object-contain`,
+    image: `border rounded-sm h-full object-contain cursor-pointer`,
     infor: `flex flex-1 pl-4 flex-col`,
-    name: `font-semibold text-sm line-clamp-1`,
+    name: `font-semibold text-sm line-clamp-1 cursor-pointer`,
     att: `mt-2 text-xs text-gray-400 font-semibold`,
     number: `flex flex-row h-7 mt-2`,
     buttonAdd: `

@@ -8,8 +8,8 @@ import { product1, product2, product3 } from "../Image";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setListProductDetail, thunkGetCart } from "shop/share/slices/Cart";
-import Api from "shop/api";
 import Utils from "shop/share/Utils";
+import Api from "api2";
 
 const cartRightRef = createRef();
 
@@ -91,13 +91,17 @@ const CartRight = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { listProduct, listProductDetail } = useSelector(state => state.cart);
+    const { listModel } = useSelector(state => state.cart);
+    const { account } = useSelector(state => state.account)
 
     const [show, setShow] = useState(false);
-    const [data, setData] = useState([...data_])
     const [cartRightStyle, springCartRight] = useSpring(() => ({
         transform: "translateX(100%)"
     }));
+
+    const loadData = () => {
+        dispatch(thunkGetCart(account.accountId))
+    }
 
     const startShowCartRight = () => {
         springCartRight.start({
@@ -128,20 +132,6 @@ const CartRight = () => {
         }
     }, [show]);
 
-    const getData = async () => {
-        const data = [];
-        for (const item of listProduct) {
-            const response = await Api.product.getProductInformation(item.productId);
-            const product = response.data.product;
-            data.push({
-                ...product,
-                images: product.imageProduct.map(item => item.imageLink),
-                detail: JSON.parse(product.detail ?? "{}")
-            })
-        }
-        dispatch(setListProductDetail(data))
-    }
-
     useEffect(() => {
         cartRightRef.current = {
             show: () => {
@@ -149,12 +139,15 @@ const CartRight = () => {
                 setShow(true);
             }
         }
-        dispatch(thunkGetCart());
+        loadData()
     }, []);
 
-    useEffect(() => {
-        getData();
-    }, [listProduct]);
+    const goTo = (item) => {
+        const path = Utils.convertToPath(item.model.product.name, item.model.productId);
+        startHideCartRight();
+        setShow(false);
+        navigate("/product/" + path);
+    }
 
     return (
         <div>
@@ -177,31 +170,34 @@ const CartRight = () => {
                         icon={faCircleXmark} />
                 </div>
                 <div className={className.title}>CART</div>
-                {listProductDetail.length == 0 && (
+                {listModel.length == 0 && (
                     <div className={className.notFound}>
                         Không có sản phẩm nào...
                     </div>
                 )}
                 <div className={className.data}>
-                    {listProductDetail.map((item, index) => (
+                    {listModel.map((item, index) => (
                         <div
                             key={item.id ?? index}
                             className={className.item}>
                             <img
                                 className={className.image}
-                                src={item.images[0]} />
+                                src={"http://localhost:4000" + item.model.product.images[0]}
+                                onClick={() => goTo(item)} />
                             <div className={className.infor}>
-                                <div className={className.name}>{item.name}</div>
+                                <div
+                                    className={className.name}
+                                    onClick={() => goTo(item)}>{item.model.product.name}</div>
                                 <div className={className.att}>
-                                    {item.detail.color.split("|").at(0)} / {item.detail.material.split("|").at(0)} / {item.detail.size.split("|").at(0)}
+                                    {item.model.name.replace(/\|/g, " / ")}
                                 </div>
                                 <div className={className.number}>
                                     <div
                                         className={className.buttonAdd}
                                         onClick={() => {
-                                            return;
-                                            item.number = item.number - 1;
-                                            setData([...data])
+                                            const response = Api.cart.popFromCart(item.model.modelId, account.accountId, 1);
+                                            Utils.showToastSuccess('Remove successfully!')
+                                            loadData();
                                         }}>
                                         -
                                     </div>
@@ -211,21 +207,26 @@ const CartRight = () => {
                                     <div
                                         className={className.buttonAdd}
                                         onClick={() => {
-                                            return;
-                                            item.number = item.number + 1;
-                                            setData([...data])
+                                            const response = Api.cart.addToCart(item.model.modelId, account.accountId, 1);
+                                            if (response.result == "success") {
+                                                Utils.showToastSuccess("Add to cart successfully!");
+                                                loadData();
+                                            }
+                                            else {
+                                                Utils.showToastError(response.message);
+                                            }
                                         }}>
                                         +
                                     </div>
                                 </div>
-                                <div className={className.price}>{item.price.toLocaleString()}₫</div>
+                                <div className={className.price}>{item.model.product.price.toLocaleString()}₫</div>
                             </div>
                             <div
                                 className={className.clear}
                                 onClick={async () => {
-                                    const response = await Api.cart.removeFromCart(item.id);
+                                    const response = Api.cart.popFromCart(item.model.modelId, account.accountId, item.number);
                                     Utils.showToastSuccess('Remove successfully!')
-                                    dispatch(thunkGetCart());
+                                    loadData();
                                 }}>
                                 <FontAwesomeIcon
                                     icon={faCircleXmark} />
@@ -236,7 +237,7 @@ const CartRight = () => {
                 <div className={className.bottom}>
                     <div className={className.total}>
                         <div>TOTAL</div>
-                        <div>{listProductDetail.reduce((prev, item) => prev + item.price, 0).toLocaleString()}₫</div>
+                        <div>{listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0).toLocaleString()}₫</div>
                     </div>
                     <div className={className.row}>
                         <div

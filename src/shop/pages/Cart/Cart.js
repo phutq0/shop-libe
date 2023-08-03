@@ -4,109 +4,31 @@ import { product1, product2, product3 } from "../../components/Image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setListProductDetail, thunkGetCart } from "shop/share/slices/Cart";
-import Api from "shop/api";
+import { thunkGetCart } from "shop/share/slices/Cart";
 import Utils from "shop/share/Utils";
 import { useNavigate } from "react-router-dom";
-
-const data_ = [
-    {
-        id: 1,
-        name: "BLACK SIDE ZIP SHORTS",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 1,
-        price: 380000,
-        image: product1,
-    },
-    {
-        id: 2,
-        name: "FULL OF LOVE WHITE T-SHIRT",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 1,
-        price: 390000,
-        image: product2,
-    },
-    {
-        id: 3,
-        name: "LIBÉ NAVY CAP",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 2,
-        price: 380000,
-        image: product3,
-    },
-    {
-        id: 4,
-        name: "FULL OF LOVE WHITE T-SHIRT",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 1,
-        price: 390000,
-        image: product2,
-    },
-    {
-        id: 5,
-        name: "LIBÉ NAVY CAP",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 2,
-        price: 380000,
-        image: product3,
-    },
-    {
-        id: 6,
-        name: "FULL OF LOVE WHITE T-SHIRT",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 1,
-        price: 390000,
-        image: product2,
-    },
-    {
-        id: 7,
-        name: "LIBÉ NAVY CAP",
-        size: "L",
-        color: "Black",
-        material: "Cotton",
-        number: 2,
-        price: 380000,
-        image: product3,
-    },
-]
+import Api from "api2";
 
 const Cart = () => {
 
     const navigate = useNavigate();
+    const { account } = useSelector(state => state.account);
 
     const dispatch = useDispatch();
 
-    const { listProduct, listProductDetail } = useSelector(state => state.cart);
+    const { listModel } = useSelector(state => state.cart);
 
-    const getData = async () => {
-        const data = [];
-        for (const item of listProduct) {
-            const response = await Api.product.getProductInformation(item.productId);
-            const product = response.data.product;
-            data.push({
-                ...product,
-                images: product.imageProduct.map(item => item.imageLink),
-                detail: JSON.parse(product.detail ?? "{}")
-            })
-        }
-        dispatch(setListProductDetail(data))
+    const loadData = () => {
+        dispatch(thunkGetCart(account.accountId))
     }
 
     useEffect(() => {
-        getData();
-    }, [listProduct])
+        useEffect(() => {
+            if (listModel.length == 0) {
+                loadCart();
+            }
+        }, [])
+    }, [])
 
     return (
         <div className={className.container}>
@@ -114,28 +36,28 @@ const Cart = () => {
                 YOUR SHOPPING CART
             </div>
             <div className={className.description}>
-                {`${listProductDetail.length} item(s) in your cart`}
+                {`${listModel.length} item(s) in your cart`}
             </div>
             <div className={className.content}>
-                {listProductDetail.map((item, index) => (
+                {listModel.map((item, index) => (
                     <div
                         key={item.id ?? index}
                         className={className.item}>
                         <img
                             className={className.image}
-                            src={item.images[0]} />
+                            src={"http://localhost:4000" + item.model.product.images[0]} />
                         <div className={className.infor}>
-                            <div className={className.name}>{item.name}</div>
+                            <div className={className.name}>{item.model.product.name}</div>
                             <div className={className.att}>
-                                {item.detail.color.split("|").at(0)} / {item.detail.material.split("|").at(0)} / {item.detail.size.split("|").at(0)}
+                                {item.model.name.replace(/\|/g, " / ")}
                             </div>
                             <div className={className.number}>
                                 <div
                                     className={className.buttonAdd}
                                     onClick={() => {
-                                        return;
-                                        item.number = item.number - 1;
-                                        setData([...data])
+                                        const response = Api.cart.popFromCart(item.model.modelId, account.accountId, 1);
+                                        Utils.showToastSuccess('Remove successfully!')
+                                        loadData();
                                     }}>
                                     -
                                 </div>
@@ -145,24 +67,29 @@ const Cart = () => {
                                 <div
                                     className={className.buttonAdd}
                                     onClick={() => {
-                                        return;
-                                        item.number = item.number + 1;
-                                        setData([...data])
+                                        const response = Api.cart.addToCart(item.model.modelId, account.accountId, 1);
+                                        if (response.result == "success") {
+                                            Utils.showToastSuccess("Add to cart successfully!");
+                                            loadData();
+                                        }
+                                        else {
+                                            Utils.showToastError(response.message);
+                                        }
                                     }}>
                                     +
                                 </div>
                             </div>
-                            <div className={className.price}>{item.price.toLocaleString()}₫</div>
+                            <div className={className.price}>{item.model.product.price.toLocaleString()}₫</div>
                         </div>
                         <div className={className.sumPrice}>
-                            {(item.price).toLocaleString()}₫
+                            {(item.model.product.price * item.number).toLocaleString()}₫
                         </div>
                         <div
                             className={className.clear}
                             onClick={async () => {
-                                const response = await Api.cart.removeFromCart(item.id);
+                                const response = Api.cart.popFromCart(item.model.modelId, account.accountId, item.number);
                                 Utils.showToastSuccess('Remove successfully!')
-                                dispatch(thunkGetCart());
+                                loadData();
                             }}>
                             <FontAwesomeIcon
                                 icon={faCircleXmark} />
@@ -172,7 +99,7 @@ const Cart = () => {
             </div>
             <div className={className.total}>
                 <div>TOTAL</div>
-                <div>{listProductDetail.reduce((prev, item) => prev + item.price, 0).toLocaleString()}₫</div>
+                <div>{listModel.reduce((prev, item) => prev + item.model.product.price, 0).toLocaleString()}₫</div>
             </div>
             <div className={className.bottom}>
                 <div
