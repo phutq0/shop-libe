@@ -534,6 +534,15 @@ const order = {
         return {
             result: "success"
         }
+    },
+    updateOrder: (orderId, status) => {
+        const data = database.load();
+        const index = data.order.data.findIndex(i => i.orderId == orderId);
+        data.order.data[index].status = status;
+        database.save(data);
+        return {
+            result: "success"
+        }
     }
 }
 

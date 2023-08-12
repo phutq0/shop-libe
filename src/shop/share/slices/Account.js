@@ -5,9 +5,7 @@ const getAccount = () => {
     if (data) {
         return JSON.parse(data);
     }
-    return {
-        accountId: 0
-    };
+    return null
 }
 
 const initialState = {

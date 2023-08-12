@@ -11,7 +11,8 @@ import {
 	Login,
 	Product,
 	Register,
-	Search
+	Search,
+	Video
 } from "./shop/pages";
 import store from "./shop/share/Store";
 import { useEffect, useLayoutEffect } from "react";
@@ -30,6 +31,7 @@ import {
 } from "./admin/pages";
 import { AdminLayout } from "./admin/components";
 import Toast from "shop/share/Utils/components/Toast";
+import data from "./data.json"
 
 const pages = [
 	{ id: 0, path: "/", Layout: ShopLayout, Page: Home },
@@ -46,9 +48,11 @@ const pages = [
 	{ id: 12, path: "/admin/login", Layout: ({ children }) => (children), Page: AdminLogin },
 	{ id: 11, path: "/admin", Layout: AdminLayout, Page: Dashboard },
 	{ id: 13, path: "/admin/collection", Layout: AdminLayout, Page: AdminCollection },
-	{ id: 13, path: "/admin/order", Layout: AdminLayout, Page: Order },
-	{ id: 13, path: "/admin/product", Layout: AdminLayout, Page: AdminProduct },
-	{ id: 13, path: "/admin/user", Layout: AdminLayout, Page: User },
+	{ id: 14, path: "/admin/order", Layout: AdminLayout, Page: Order },
+	{ id: 15, path: "/admin/product", Layout: AdminLayout, Page: AdminProduct },
+	{ id: 16, path: "/admin/user", Layout: AdminLayout, Page: User },
+	{ id: 17, path: "/video", Layout: ({ children }) => (children), Page: Video },
+	{ id: 17, path: "/video/:videoId", Layout: ({ children }) => (children), Page: Video },
 ]
 
 function App() {
@@ -81,6 +85,11 @@ const AppStart = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+
+		const x = localStorage.getItem("database");
+		if (!x) {
+			localStorage.setItem("database", JSON.stringify(data, null, 4))
+		}
 
 		const rememberLogin = async () => {
 			await Utils.wait(1000);

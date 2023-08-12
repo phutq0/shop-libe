@@ -105,7 +105,7 @@ const CheckOut = () => {
             const result = Api.order.createOrder(params);
             loadCart();
             Utils.showToastSuccess("Order successfully!");
-            navigate("/");
+            navigate("/account/history");
         }
         else {
             const params = {

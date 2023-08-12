@@ -1,29 +1,49 @@
 import { faMessage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import { useState } from "react"
+import ReactLoading from "react-loading";
 
 
 const Chat = () => {
 
     const [show, setShow] = useState(false);
+    const [question, setQuestion] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const [messages, setMessages] = useState([
         {
-            id: 0,
+            id: Math.random().toString(),
             content: "Hello, how can i help you?",
             type: 0
-        },
-        {
-            id: 1,
-            content: "Tôi muốn tư vấn chọn size cho sản phẩm 'Green Silk Midi Skirt', cân nặng của tôi là 44Kg, chiều cao 1.6m.",
-            type: 1
-        },
-        {
-            id: 3,
-            content: "Với thông tin chiều cao và cân nặng của bạn, hãy lựa chọn size 'M' !",
-            type: 0
-        },
-    ])
+        }
+    ]);
+
+    const handleChat = async () => {
+        if (!question || question.length < 20) {
+            return;
+        }
+        messages.push({
+            id: Math.random().toString(),
+            content: question,
+            type: 1,
+        });
+        setMessages([...messages])
+        setLoading(true);
+        setQuestion("");
+        const response = await axios.get("http://localhost:8000/question", {
+            params: {
+                text: question
+            }
+        });
+        setLoading(false);
+        messages.push({
+            id: Math.random().toString(),
+            content: response.data.message,
+            type: 0,
+        });
+        setMessages([...messages])
+    }
 
     return (
         <div>
@@ -40,7 +60,7 @@ const Chat = () => {
                     <div className="flex-1 overflow-y-scroll flex flex-col py-2 px-2">
                         {messages.map(item => (
                             <div
-                                key={item}
+                                key={item.id}
                                 className={"flex flex-row mb-3" + (item.type == 1 ? " flex-row-reverse" : "")}>
                                 {item.type == 0 && (
                                     <img
@@ -53,13 +73,30 @@ const Chat = () => {
                                 </div>
                             </div>
                         ))}
+                        {loading && (
+                            <div className="flex items-center flex-col">
+                                <ReactLoading
+                                    type="bars"
+                                    color="black"
+                                    className="scale-[0.5]"
+                                />
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-row h-12 px-2 pb-2 items-center">
                         <input
                             className="flex-1 h-full outline-none rounded-full border border-gray-300 px-3 text-sm"
-                            placeholder="Enter question" />
+                            placeholder="Enter question"
+                            value={question}
+                            onChange={e => setQuestion(e.target.value)}
+                            onKeyDown={e => {
+                                if (e.key == "Enter") {
+                                    handleChat()
+                                }
+                            }} />
                         <FontAwesomeIcon
                             icon={faPaperPlane}
+                            onClick={handleChat}
                             className="text-blue-500 p-2 text-xl cursor-pointer ml-1 border rounded-full shadow" />
                     </div>
                 </div>

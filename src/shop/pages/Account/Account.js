@@ -27,7 +27,7 @@ const Account = () => {
 
     const handleLogout = () => {
         dispatch(setAccount(null));
-        localStorage.clear("account");
+        localStorage.removeItem("account");
         navigate("/");
     }
 

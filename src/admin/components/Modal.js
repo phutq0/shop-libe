@@ -4,7 +4,7 @@ import Api from "api2";
 import _ from "lodash";
 import { createRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import DropDown from "shop/components/DropDown/DropDown";
+import DropDown from "shop/components/DropDown";
 import Utils from "shop/share/Utils";
 import { thunkGetCollection } from "shop/share/slices/Collection";
 
@@ -38,10 +38,16 @@ const OrderModal = () => {
 
     const [config, setConfig] = useState({ ...defaultConfig });
 
+    const [status, setStatus] = useState({
+        id: 0,
+        name: null,
+        display: "Select"
+    })
+
     useEffect(() => {
         orderRef.current = {
             show: (config) => {
-                setConfig({ ...defaultConfig, ...config })
+                setConfig({ ...defaultConfig, ...config });
                 setShow(true);
             },
             hide: () => {
@@ -52,14 +58,27 @@ const OrderModal = () => {
 
 
     const onClickRight = () => {
-
+        config.onConfirm(config.order.orderId, status.value);
     }
 
     useEffect(() => {
         if (show) {
-
+            const status_ = statuses.filter(i => i.value == config.order.status);
+            console.log(status_);
+            console.log("config.order.status", config.order.status);
+            if (status_.length > 0) {
+                setStatus(status_[0])
+            }
         }
     }, [show]);
+
+    const statuses = [
+        { id: 0, value: "Pending", display: "Pending" },
+        { id: 1, value: "Confirm", display: "Confirmed" },
+        { id: 2, value: "Preparing", display: "Preparing" },
+        { id: 3, value: "Shipping", display: "Shipping" },
+        { id: 4, value: "Done", display: "Done" },
+    ]
 
     return (
         <div>
@@ -116,53 +135,76 @@ const OrderModal = () => {
                                 </div>
                                 <div className="flex flex-row text-sm font-semibold items-center mb-2">
                                     <div className="w-28">Village:</div>
-
                                     <input
                                         className="flex-1 h-10 px-2 border rounded border-gray-200 bg-gray-100 focus-within:bg-white focus-within:border-x-gray-400 font-normal outline-none"
                                         value={config?.order?.address?.village}
                                         disabled={true}
                                     />
                                 </div>
-                                <div>Product:</div>
-                                {/* {config?.order?.models?.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex flex-row h-20 items-center mb-4">
-                                        <img
-                                            src={"http://localhost:4000" + item.model.product.images[0]}
-                                            className="object-contain w-20 h-20 border rounded"
-                                        />
-                                        <div className="flex flex-col flex-1 pl-2">
+                                <div className="flex flex-row text-sm font-semibold items-center mb-2">
+                                    <div className="w-28">Status:</div>
+                                    <DropDown
+                                        className="flex-1"
+                                        component={show => (
                                             <div
-                                                className="text-sm">
-                                                {item.model.product.name}
+                                                className="w-full h-10 border rounded flex items-center px-2 cursor-pointer"
+                                                style={{ borderColor: show ? "black" : undefined }}>
+                                                {status.display}
                                             </div>
-                                            <div
-                                                className="text-xs text-gray-500">
-                                                {item.model.name.replace(/\|/g, " / ")}
+                                        )}
+                                        render={
+                                            <div className="w-full max-h-[300px] bg-white rounded shadow-xl overflow-y-scroll py-1 border -mt-2">
+                                                {statuses.map(item_ => (
+                                                    <div
+                                                        key={item_.id}
+                                                        className="h-8 flex items-center pl-2 font-normal hover:bg-gray-100 cursor-pointer hover:font-semibold"
+                                                        onClick={() => setStatus(item_)}>
+                                                        {item_.display}
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="text-xs text-gray-500">x{item.number}</div>
+                                        } />
+                                </div>
+                                <div className="text-sm font-semibold pb-3">Product:</div>
+                                <div className="flex flex-col px-2 text-sm">
+                                    {config?.order?.models?.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex flex-row h-20 items-center mb-4 font-semibold">
+                                            <div className="font-semibold mr-3">{index + 1}.</div>
+                                            <img
+                                                src={"http://localhost:4000" + item.model.product.images[0]}
+                                                className="object-contain w-20 h-20 border rounded"
+                                            />
+                                            <div className="flex flex-col flex-1 pl-2">
+                                                <div
+                                                    className="text-sm">
+                                                    {item.model.product.name}
+                                                </div>
+                                                <div
+                                                    className="text-xs text-gray-500">
+                                                    {item.model.name.replace(/\|/g, " / ")}
+                                                </div>
+                                                <div className="text-xs text-gray-500">x{item.number}</div>
+                                            </div>
+                                            <div className="font-semibold text-sm flex flex-col">
+                                                <div>{item.model.product.price.toLocaleString()}₫</div>
+                                            </div>
                                         </div>
-                                        <div className="font-semibold text-sm flex flex-col">
-                                            <div>{item.model.product.price.toLocaleString()}₫</div>
-                                        </div>
+                                    ))}
+                                    <div className="flex flex-row justify-between border-t-2 border-black pt-3 text-sm font-semibold">
+                                        <div>Sum:</div>
+                                        <div>{config?.order?.models.reduce((prev, item) => prev + item.model.product.price * item.number, 0).toLocaleString()}₫</div>
                                     </div>
-                                ))} */}
-                                {/* <div className="flex flex-row justify-between border-t-2 border-black pt-3 text-sm font-semibold">
-                                    <div>Sum:</div>
-                                    <div>{listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0).toLocaleString()}₫</div>
+                                    <div className="flex flex-row justify-between pt-3 text-sm font-semibold">
+                                        <div>Ship:</div>
+                                        <div>{(config?.order?.ship ? 45000 : 0).toLocaleString()}₫</div>
+                                    </div>
+                                    <div className="flex flex-row justify-between pt-3 text-base font-semibold">
+                                        <div>Total:</div>
+                                        <div>{(config?.order?.models.reduce((prev, item) => prev + item.model.product.price * item.number, 0) + (config?.order?.ship ? 45000 : 0)).toLocaleString()}₫</div>
+                                    </div>
                                 </div>
-                                <div className="flex flex-row justify-between pt-3 text-sm font-semibold">
-                                    <div>Ship:</div>
-                                    <div>{(ship ? 45000 : 0).toLocaleString()}₫</div>
-                                </div>
-                                <div className="flex flex-row justify-between pt-3 text-base font-semibold">
-                                    <div>Total:</div>
-                                    <div>{(listModel.reduce((prev, item) => prev + item.model.product.price * item.number, 0) + (ship ? 45000 : 0)).toLocaleString()}₫</div>
-                                </div> */}
-
-
-
                             </div>
                             <div className="flex flex-row px-1 py-2 border-t border-gray-300 text-sm font-semibold">
                                 <div

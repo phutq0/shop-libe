@@ -7,6 +7,7 @@ import Login from "./Login";
 import Product from "./Product";
 import Register from "./Register";
 import Search from "./Search";
+import Video from "./Video";
 
 export {
     Account,
@@ -18,4 +19,5 @@ export {
     Product,
     Register,
     Search,
+    Video
 }

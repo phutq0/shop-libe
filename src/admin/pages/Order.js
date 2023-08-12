@@ -4,6 +4,7 @@ import { Table } from "admin/components"
 import { faGear, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { orderRef } from "admin/components/Modal";
+import Utils from "shop/share/Utils";
 
 
 const Order = () => {
@@ -31,7 +32,13 @@ const Order = () => {
     }
     const handleUpdate = (item) => {
         orderRef.current.show({
-            order: item
+            order: item,
+            onConfirm: (orderId, status) => {
+                const result = Api.order.updateOrder(orderId, status);
+                Utils.showToastSuccess("Update status successfully!");
+                loadData();
+                orderRef.current.hide();
+            }
         })
     }
 

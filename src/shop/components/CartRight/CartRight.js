@@ -100,7 +100,7 @@ const CartRight = () => {
     }));
 
     const loadData = () => {
-        dispatch(thunkGetCart(account.accountId))
+        dispatch(thunkGetCart(account?.accountId ?? 0))
     }
 
     const startShowCartRight = () => {

@@ -107,6 +107,9 @@ const MenuLeft = () => {
                     <FontAwesomeIcon
                         icon={faCircleXmark} />
                 </div>
+                <div
+                    className={className.item}
+                    onClick={() => navigate("/video")}>VIDEOS</div>
                 <div className={className.item}>NEW IN</div>
                 <div className={className.shop}>
                     <div
